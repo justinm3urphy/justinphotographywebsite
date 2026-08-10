@@ -3,20 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Justin Tang — Photography projects spanning automotive, aviation, concerts, food, commission, and Formula 1.">
     <title>Projects — Justin Tang</title>
     <link rel="stylesheet" href="styles.css">
-    <meta property="og:title" content="Justin Tang — Photography">
-    <meta property="og:description" content="Multidisciplinary creative photographer capturing stories through automotive, aviation, food, and concerts.">
-    <meta property="og:image" content="https://cogroup.studio/images/main_page/background/MSP08212.jpg">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://cogroup.studio/projects.html">
-    <meta name="twitter:card" content="summary_large_image">
+    <style>
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        @media (max-width: 900px) {
+            .works-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 600px) {
+            .works-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .work-item.medium {
+            grid-column: span 1 !important;
+            aspect-ratio: 4/5 !important;
+        }
+    </style>
 </head>
-<body>
+<body style="background-color: var(--bg-primary);">
+    <!-- Navigation -->
     <nav class="navbar">
         <div class="logo">
-            <a href="index.html">jt.</a>
+            <a href="index.html">justin tang</a>
         </div>
         <ul class="nav-menu">
             <li><a href="projects.html" class="nav-link" style="opacity: 0.6;">projects</a></li>
@@ -25,45 +40,40 @@
         </ul>
     </nav>
 
-    <section class="container page-header">
+    <!-- Projects Header -->
+    <section class="container" style="padding-top: 20vh; padding-bottom: 5vh;">
         <h1 class="huge-text reveal">projects</h1>
         <p class="reveal" style="margin-top: 2rem; max-width: 800px;">A collection of editorial pieces, and deep dives into specific visual stories.</p>
     </section>
 
+    <!-- Projects List -->
     <section class="container" style="padding-top: 0; padding-bottom: 10vh;">
         <div class="works-grid">
             <a href="project-automotive.html" class="work-item medium reveal" id="thumb-automotive">
-                <img src="images/projects/automotive/4x5/MSP00712.jpg" alt="Automotive" loading="lazy">
+                <img src="images/projects/automotive/4x5/MSP00712.jpg" alt="automotive" loading="lazy">
                 <div class="work-caption">
                     <h3>automotive</h3>
                     <span>view &rarr;</span>
                 </div>
             </a>
             <a href="project-aviation.html" class="work-item medium reveal" id="thumb-aviation">
-                <img src="images/projects/aviation/4x5/a10.jpg" alt="Aviation" loading="lazy">
+                <img src="images/projects/aviation/4x5/a10.jpg" alt="aviation" loading="lazy">
                 <div class="work-caption">
                     <h3>aviation</h3>
                     <span>view &rarr;</span>
                 </div>
             </a>
-            <a href="project-concerts.html" class="work-item medium reveal" id="thumb-concerts">
-                <img src="images/projects/concerts/4x5/DSC01805-Enhanced-NR.jpg" alt="Concerts" loading="lazy">
-                <div class="work-caption">
-                    <h3>concerts</h3>
-                    <span>view &rarr;</span>
-                </div>
-            </a>
-            <a href="project-food.html" class="work-item medium reveal" id="thumb-food">
-                <img src="images/projects/food/4x5/DSC01244.jpg" alt="Food" loading="lazy">
-                <div class="work-caption">
-                    <h3>food</h3>
-                    <span>view &rarr;</span>
-                </div>
-            </a>
             <a href="project-commission.html" class="work-item medium reveal" id="thumb-commission">
-                <img src="images/projects/commission/4x5/DSC00355.jpg" alt="Commission" loading="lazy">
+                <img src="images/projects/commission/4x5/DSC00355.jpg" alt="commission" loading="lazy">
                 <div class="work-caption">
                     <h3>commission</h3>
+                    <span>view &rarr;</span>
+                </div>
+            </a>
+            <a href="project-concerts.html" class="work-item medium reveal" id="thumb-concerts">
+                <img src="images/projects/concerts/4x5/DSC01805-Enhanced-NR.jpg" alt="concerts" loading="lazy">
+                <div class="work-caption">
+                    <h3>concerts</h3>
                     <span>view &rarr;</span>
                 </div>
             </a>
@@ -74,14 +84,23 @@
                     <span>view &rarr;</span>
                 </div>
             </a>
+            <a href="project-food.html" class="work-item medium reveal" id="thumb-food">
+                <img src="images/projects/food/4x5/DSC01244.jpg" alt="food" loading="lazy">
+                <div class="work-caption">
+                    <h3>food</h3>
+                    <span>view &rarr;</span>
+                </div>
+            </a>
+
         </div>
     </section>
 
+    <!-- Footer -->
     <footer>
         <div class="footer-content">
             <div>
-                <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Let's work together</p>
-                <a href="mailto:justintangapple@gmail.com" class="footer-email">justintangapple@gmail.com</a>
+                <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;"><!--T:site.footer_tagline-->Let's work together<!--/T--></p>
+                <a href="mailto:justintangapple@gmail.com" class="footer-email"><!--T:site.email-->justintangapple@gmail.com<!--/T--></a>
             </div>
             <div class="footer-socials" style="display: flex; flex-direction: column; gap: 0.5rem; text-align: right;">
                 <a href="https://www.instagram.com/just.in02/" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.7); font-size: 0.875rem;">Main Instagram &#8599;</a>
@@ -90,8 +109,8 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <span>&copy; 2026 Justin Tang</span>
-            <span>Built with Google Antigravity</span>
+            <span><!--T:site.copyright-->&copy; 2026 Justin Tang<!--/T--></span>
+            <span><!--T:site.built_with-->Built with Google Antigravity<!--/T--></span>
         </div>
     </footer>
 
@@ -99,24 +118,32 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const projectImages = {
-                'automotive': ['images/projects/automotive/4x5/MSP00712.jpg','images/projects/automotive/4x5/MSP01329.jpg','images/projects/automotive/4x5/MSP01333.jpg','images/projects/automotive/4x5/MSP01339.jpg','images/projects/automotive/4x5/MSP01370-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP01524.jpg','images/projects/automotive/4x5/MSP01560.jpg','images/projects/automotive/4x5/MSP04316-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP04382-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP04401-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP04486-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP04521-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP04529-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP04537-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP04554-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP04577-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP04688-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP04690-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP04703-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP04752-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP04822-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP05003-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP05011-Enhanced-NR.jpg','images/projects/automotive/4x5/MSP08443(1).jpg','images/projects/automotive/4x5/MSP09058.jpg','images/projects/automotive/4x5/MSP09107(1).jpg','images/projects/automotive/4x5/MSP09112.jpg','images/projects/automotive/4x5/MSP09455-Enhanced-NR-2.jpg'],
-                'aviation': ['images/projects/aviation/4x5/a10.jpg','images/projects/aviation/4x5/c17.jpg','images/projects/aviation/4x5/DSC03089-Enhanced-NR-Edit-SR.jpg','images/projects/aviation/4x5/DSC03209-Enhanced-NR-Edit-SR.jpg','images/projects/aviation/4x5/DSC03521-Enhanced-NR-Edit-SR.jpg','images/projects/aviation/4x5/DSC04140-Enhanced-NR-Edit-SR.jpg','images/projects/aviation/4x5/DSC05217-Enhanced-NR-Edit-SR.jpg','images/projects/aviation/4x5/DSC05407-Enhanced-NR-Edit-SR.jpg','images/projects/aviation/4x5/DSC05686-Enhanced-NR-Edit-SR.jpg','images/projects/aviation/4x5/DSC09326-Enhanced-NR-Edit-SR.jpg','images/projects/aviation/4x5/f16-osan.jpg','images/projects/aviation/4x5/frenchbread1.jpg','images/projects/aviation/4x5/hualien-rtb1.jpg','images/projects/aviation/4x5/hualien-taxiway.jpg','images/projects/aviation/4x5/hualien-taxiway2.jpg','images/projects/aviation/4x5/MSP00629.jpg','images/projects/aviation/4x5/MSP00763-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP00845-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP00855.jpg','images/projects/aviation/4x5/MSP01030.jpg','images/projects/aviation/4x5/MSP01164.jpg','images/projects/aviation/4x5/MSP02103-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP02725.jpg','images/projects/aviation/4x5/MSP02943-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP03870.jpg','images/projects/aviation/4x5/MSP04309.jpg','images/projects/aviation/4x5/MSP04359.jpg','images/projects/aviation/4x5/MSP05366.jpg','images/projects/aviation/4x5/MSP05516.jpg','images/projects/aviation/4x5/MSP05805-2.jpg','images/projects/aviation/4x5/MSP05895.jpg','images/projects/aviation/4x5/MSP05906.jpg','images/projects/aviation/4x5/MSP06009.jpg','images/projects/aviation/4x5/MSP06061.jpg','images/projects/aviation/4x5/MSP06375-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP06484-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP06569-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP06574.jpg','images/projects/aviation/4x5/MSP06650.jpg','images/projects/aviation/4x5/MSP06797-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP06830.jpg','images/projects/aviation/4x5/MSP06948-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP07027-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP07187-Edit.jpg','images/projects/aviation/4x5/MSP07414-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP07626-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP07630.jpg','images/projects/aviation/4x5/MSP07677-Enhanced-NR-Edit-SR.jpg','images/projects/aviation/4x5/MSP07778.jpg','images/projects/aviation/4x5/MSP07889-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP07925-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP07968-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP08032-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP08259-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP08578-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP08690.jpg','images/projects/aviation/4x5/MSP09462-Enhanced-NR.jpg','images/projects/aviation/4x5/MSP09731.jpg','images/projects/aviation/4x5/MSP09792.jpg','images/projects/aviation/4x5/MSP09906.jpg','images/projects/aviation/4x5/osprey1.jpg'],
-                'concerts': ['images/projects/concerts/4x5/DSC01805-Enhanced-NR.jpg','images/projects/concerts/4x5/DSC01861-Enhanced-NR.jpg','images/projects/concerts/4x5/DSC02118-Enhanced-NR.jpg','images/projects/concerts/4x5/DSC02171-Enhanced-NR.jpg','images/projects/concerts/4x5/DSC02194-Enhanced-NR.jpg','images/projects/concerts/4x5/DSC02260-Enhanced-NR.jpg','images/projects/concerts/4x5/DSC05890.jpg','images/projects/concerts/4x5/DSC05903.jpg','images/projects/concerts/4x5/DSC05947.jpg','images/projects/concerts/4x5/DSC06088.jpg','images/projects/concerts/4x5/DSC06116.jpg','images/projects/concerts/4x5/DSC06189.jpg','images/projects/concerts/4x5/DSC06357.jpg','images/projects/concerts/4x5/DSC06359.jpg','images/projects/concerts/4x5/DSC06455.jpg','images/projects/concerts/4x5/DSC06461.jpg','images/projects/concerts/4x5/DSC06485.jpg','images/projects/concerts/4x5/DSC06487.jpg','images/projects/concerts/4x5/DSC06533.jpg','images/projects/concerts/4x5/DSC06556.jpg','images/projects/concerts/4x5/DSC06634.jpg','images/projects/concerts/4x5/DSC06647.jpg','images/projects/concerts/4x5/DSC06735.jpg','images/projects/concerts/4x5/DSC06774.jpg','images/projects/concerts/4x5/DSC06803.jpg'],
-                'food': ['images/projects/food/4x5/DSC01244.jpg','images/projects/food/4x5/DSC03364.jpg','images/projects/food/4x5/DSC03366.jpg','images/projects/food/4x5/DSC03369.jpg','images/projects/food/4x5/DSC03472.jpg','images/projects/food/4x5/DSC03489.jpg','images/projects/food/4x5/DSC03491.jpg','images/projects/food/4x5/DSC03504.jpg','images/projects/food/4x5/DSC03508.jpg','images/projects/food/4x5/DSC03513.jpg','images/projects/food/4x5/DSC03515.jpg','images/projects/food/4x5/DSC03580.jpg','images/projects/food/4x5/DSC03585.jpg','images/projects/food/4x5/DSC06005.jpg','images/projects/food/4x5/DSC06018.jpg','images/projects/food/4x5/DSC06030.jpg','images/projects/food/4x5/DSC06148.jpg','images/projects/food/4x5/DSC06325.jpg','images/projects/food/4x5/DSC06353.jpg','images/projects/food/4x5/DSC06376.jpg','images/projects/food/4x5/DSC06386.jpg','images/projects/food/4x5/DSC06481.jpg','images/projects/food/4x5/DSC07318.jpg','images/projects/food/4x5/DSC07328.jpg','images/projects/food/4x5/DSC07366.jpg','images/projects/food/4x5/DSC07383.jpg','images/projects/food/4x5/DSC07385.jpg','images/projects/food/4x5/DSC07548.jpg','images/projects/food/4x5/DSC07644.jpg','images/projects/food/4x5/DSC07671.jpg','images/projects/food/4x5/DSC09979.jpg','images/projects/food/4x5/MSP05112-Enhanced-NR.jpg','images/projects/food/4x5/MSP05118-Enhanced-NR.jpg','images/projects/food/4x5/MSP05137-Enhanced-NR.jpg','images/projects/food/4x5/MSP05140-Enhanced-NR.jpg','images/projects/food/4x5/MSP05163-Enhanced-NR.jpg'],
-                'commission': ['images/projects/commission/4x5/DSC00355.jpg','images/projects/commission/4x5/DSC00371.jpg','images/projects/commission/4x5/DSC00461.jpg','images/projects/commission/4x5/DSC00482.jpg','images/projects/commission/4x5/DSC00494.jpg','images/projects/commission/4x5/DSC00495.jpg'],
-                'f1': ['images/projects/f1/4x5/DSC00901.jpg','images/projects/f1/4x5/DSC02492.jpg','images/projects/f1/4x5/DSC02516.jpg','images/projects/f1/4x5/DSC02607-Enhanced-NR.jpg','images/projects/f1/4x5/DSC02651-Enhanced-NR.jpg','images/projects/f1/4x5/DSC03085.jpg','images/projects/f1/4x5/DSC03883.jpg','images/projects/f1/4x5/DSC04245.jpg','images/projects/f1/4x5/DSC04293.jpg','images/projects/f1/4x5/DSC04302.jpg','images/projects/f1/4x5/DSC04358.jpg','images/projects/f1/4x5/DSC04539.jpg','images/projects/f1/4x5/DSC04652.jpg','images/projects/f1/4x5/DSC04767.jpg','images/projects/f1/4x5/DSC04873.jpg','images/projects/f1/4x5/DSC04895.jpg','images/projects/f1/4x5/DSC04950.jpg','images/projects/f1/4x5/DSC04969.jpg','images/projects/f1/4x5/DSC04985.jpg','images/projects/f1/4x5/DSC05088.jpg','images/projects/f1/4x5/DSC05144.jpg','images/projects/f1/4x5/DSC05352.jpg','images/projects/f1/4x5/DSC05385.jpg','images/projects/f1/4x5/DSC05484.jpg','images/projects/f1/4x5/DSC05488.jpg','images/projects/f1/4x5/DSC05869.jpg','images/projects/f1/4x5/DSC05883.jpg']
-            };
+            'automotive': ['images/projects/automotive/4x5/MSP00712.jpg', 'images/projects/automotive/4x5/MSP01329.jpg', 'images/projects/automotive/4x5/MSP01333.jpg', 'images/projects/automotive/4x5/MSP01339.jpg', 'images/projects/automotive/4x5/MSP01370-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP01524.jpg', 'images/projects/automotive/4x5/MSP01560.jpg', 'images/projects/automotive/4x5/MSP04316-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP04382-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP04401-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP04486-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP04521-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP04529-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP04537-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP04554-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP04577-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP04688-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP04690-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP04703-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP04752-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP04822-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP05003-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP05011-Enhanced-NR.jpg', 'images/projects/automotive/4x5/MSP08443(1).jpg', 'images/projects/automotive/4x5/MSP09058.jpg', 'images/projects/automotive/4x5/MSP09107(1).jpg', 'images/projects/automotive/4x5/MSP09112.jpg', 'images/projects/automotive/4x5/MSP09455-Enhanced-NR-2.jpg'],
+            'aviation': ['images/projects/aviation/4x5/a10.jpg', 'images/projects/aviation/4x5/c17.jpg', 'images/projects/aviation/4x5/DSC03089-Enhanced-NR-Edit-SR.jpg', 'images/projects/aviation/4x5/DSC03209-Enhanced-NR-Edit-SR.jpg', 'images/projects/aviation/4x5/DSC03521-Enhanced-NR-Edit-SR.jpg', 'images/projects/aviation/4x5/DSC04140-Enhanced-NR-Edit-SR.jpg', 'images/projects/aviation/4x5/DSC05217-Enhanced-NR-Edit-SR.jpg', 'images/projects/aviation/4x5/DSC05407-Enhanced-NR-Edit-SR.jpg', 'images/projects/aviation/4x5/DSC05686-Enhanced-NR-Edit-SR.jpg', 'images/projects/aviation/4x5/DSC09326-Enhanced-NR-Edit-SR.jpg', 'images/projects/aviation/4x5/f16-osan.jpg', 'images/projects/aviation/4x5/frenchbread1.jpg', 'images/projects/aviation/4x5/hualien-rtb1.jpg', 'images/projects/aviation/4x5/hualien-taxiway.jpg', 'images/projects/aviation/4x5/hualien-taxiway2.jpg', 'images/projects/aviation/4x5/MSP00629.jpg', 'images/projects/aviation/4x5/MSP00763-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP00845-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP00855.jpg', 'images/projects/aviation/4x5/MSP01030.jpg', 'images/projects/aviation/4x5/MSP01164.jpg', 'images/projects/aviation/4x5/MSP02103-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP02725.jpg', 'images/projects/aviation/4x5/MSP02943-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP03870.jpg', 'images/projects/aviation/4x5/MSP04309.jpg', 'images/projects/aviation/4x5/MSP04359.jpg', 'images/projects/aviation/4x5/MSP05366.jpg', 'images/projects/aviation/4x5/MSP05516.jpg', 'images/projects/aviation/4x5/MSP05805-2.jpg', 'images/projects/aviation/4x5/MSP05895.jpg', 'images/projects/aviation/4x5/MSP05906.jpg', 'images/projects/aviation/4x5/MSP06009.jpg', 'images/projects/aviation/4x5/MSP06061.jpg', 'images/projects/aviation/4x5/MSP06375-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP06484-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP06569-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP06574.jpg', 'images/projects/aviation/4x5/MSP06650.jpg', 'images/projects/aviation/4x5/MSP06797-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP06830.jpg', 'images/projects/aviation/4x5/MSP06948-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP07027-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP07187-Edit.jpg', 'images/projects/aviation/4x5/MSP07414-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP07626-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP07630.jpg', 'images/projects/aviation/4x5/MSP07677-Enhanced-NR-Edit-SR.jpg', 'images/projects/aviation/4x5/MSP07778.jpg', 'images/projects/aviation/4x5/MSP07889-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP07925-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP07968-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP08032-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP08259-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP08578-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP08690.jpg', 'images/projects/aviation/4x5/MSP09462-Enhanced-NR.jpg', 'images/projects/aviation/4x5/MSP09731.jpg', 'images/projects/aviation/4x5/MSP09792.jpg', 'images/projects/aviation/4x5/MSP09906.jpg', 'images/projects/aviation/4x5/osprey1.jpg'],
+            'commission': ['images/projects/commission/4x5/DSC00355.jpg', 'images/projects/commission/4x5/DSC00371.jpg', 'images/projects/commission/4x5/DSC00461.jpg', 'images/projects/commission/4x5/DSC00482.jpg', 'images/projects/commission/4x5/DSC00494.jpg', 'images/projects/commission/4x5/DSC00495.jpg'],
+            'concerts': ['images/projects/concerts/4x5/DSC01805-Enhanced-NR.jpg', 'images/projects/concerts/4x5/DSC01861-Enhanced-NR.jpg', 'images/projects/concerts/4x5/DSC02118-Enhanced-NR.jpg', 'images/projects/concerts/4x5/DSC02171-Enhanced-NR.jpg', 'images/projects/concerts/4x5/DSC02194-Enhanced-NR.jpg', 'images/projects/concerts/4x5/DSC02260-Enhanced-NR.jpg', 'images/projects/concerts/4x5/DSC05890.jpg', 'images/projects/concerts/4x5/DSC05903.jpg', 'images/projects/concerts/4x5/DSC05947.jpg', 'images/projects/concerts/4x5/DSC06088.jpg', 'images/projects/concerts/4x5/DSC06116.jpg', 'images/projects/concerts/4x5/DSC06189.jpg', 'images/projects/concerts/4x5/DSC06357.jpg', 'images/projects/concerts/4x5/DSC06359.jpg', 'images/projects/concerts/4x5/DSC06455.jpg', 'images/projects/concerts/4x5/DSC06461.jpg', 'images/projects/concerts/4x5/DSC06485.jpg', 'images/projects/concerts/4x5/DSC06487.jpg', 'images/projects/concerts/4x5/DSC06533.jpg', 'images/projects/concerts/4x5/DSC06556.jpg', 'images/projects/concerts/4x5/DSC06634.jpg', 'images/projects/concerts/4x5/DSC06647.jpg', 'images/projects/concerts/4x5/DSC06735.jpg', 'images/projects/concerts/4x5/DSC06774.jpg', 'images/projects/concerts/4x5/DSC06803.jpg'],
+            'f1': ['images/projects/f1/4x5/DSC00901.jpg', 'images/projects/f1/4x5/DSC02492.jpg', 'images/projects/f1/4x5/DSC02516.jpg', 'images/projects/f1/4x5/DSC02607-Enhanced-NR.jpg', 'images/projects/f1/4x5/DSC02651-Enhanced-NR.jpg', 'images/projects/f1/4x5/DSC03085.jpg', 'images/projects/f1/4x5/DSC03883.jpg', 'images/projects/f1/4x5/DSC04245.jpg', 'images/projects/f1/4x5/DSC04293.jpg', 'images/projects/f1/4x5/DSC04302.jpg', 'images/projects/f1/4x5/DSC04358.jpg', 'images/projects/f1/4x5/DSC04539.jpg', 'images/projects/f1/4x5/DSC04652.jpg', 'images/projects/f1/4x5/DSC04767.jpg', 'images/projects/f1/4x5/DSC04873.jpg', 'images/projects/f1/4x5/DSC04895.jpg', 'images/projects/f1/4x5/DSC04950.jpg', 'images/projects/f1/4x5/DSC04969.jpg', 'images/projects/f1/4x5/DSC04985.jpg', 'images/projects/f1/4x5/DSC05088.jpg', 'images/projects/f1/4x5/DSC05144.jpg', 'images/projects/f1/4x5/DSC05352.jpg', 'images/projects/f1/4x5/DSC05385.jpg', 'images/projects/f1/4x5/DSC05484.jpg', 'images/projects/f1/4x5/DSC05488.jpg', 'images/projects/f1/4x5/DSC05869.jpg', 'images/projects/f1/4x5/DSC05883.jpg'],
+            'food': ['images/projects/food/4x5/DSC01244.jpg', 'images/projects/food/4x5/DSC03364.jpg', 'images/projects/food/4x5/DSC03366.jpg', 'images/projects/food/4x5/DSC03369.jpg', 'images/projects/food/4x5/DSC03472.jpg', 'images/projects/food/4x5/DSC03489.jpg', 'images/projects/food/4x5/DSC03491.jpg', 'images/projects/food/4x5/DSC03504.jpg', 'images/projects/food/4x5/DSC03508.jpg', 'images/projects/food/4x5/DSC03513.jpg', 'images/projects/food/4x5/DSC03515.jpg', 'images/projects/food/4x5/DSC03580.jpg', 'images/projects/food/4x5/DSC03585.jpg', 'images/projects/food/4x5/DSC06005.jpg', 'images/projects/food/4x5/DSC06018.jpg', 'images/projects/food/4x5/DSC06030.jpg', 'images/projects/food/4x5/DSC06148.jpg', 'images/projects/food/4x5/DSC06325.jpg', 'images/projects/food/4x5/DSC06353.jpg', 'images/projects/food/4x5/DSC06376.jpg', 'images/projects/food/4x5/DSC06386.jpg', 'images/projects/food/4x5/DSC06481.jpg', 'images/projects/food/4x5/DSC07318.jpg', 'images/projects/food/4x5/DSC07328.jpg', 'images/projects/food/4x5/DSC07366.jpg', 'images/projects/food/4x5/DSC07383.jpg', 'images/projects/food/4x5/DSC07385.jpg', 'images/projects/food/4x5/DSC07548.jpg', 'images/projects/food/4x5/DSC07644.jpg', 'images/projects/food/4x5/DSC07671.jpg', 'images/projects/food/4x5/DSC09979.jpg', 'images/projects/food/4x5/MSP05112-Enhanced-NR.jpg', 'images/projects/food/4x5/MSP05118-Enhanced-NR.jpg', 'images/projects/food/4x5/MSP05137-Enhanced-NR.jpg', 'images/projects/food/4x5/MSP05140-Enhanced-NR.jpg', 'images/projects/food/4x5/MSP05163-Enhanced-NR.jpg'],
 
-            for (const [id, images] of Object.entries(projectImages)) {
-                const thumb = document.getElementById('thumb-' + id);
-                if (thumb && images.length > 0) {
-                    const img = thumb.querySelector('img');
-                    if (img) img.src = images[Math.floor(Math.random() * images.length)];
+            };
+            
+            // Rotate images on load
+            for (const [projectId, images] of Object.entries(projectImages)) {
+                if (images.length > 0) {
+                    const thumb = document.getElementById('thumb-' + projectId);
+                    if (thumb) {
+                        const imgEl = thumb.querySelector('img');
+                        if (imgEl) {
+                            const randomIndex = Math.floor(Math.random() * images.length);
+                            imgEl.src = images[randomIndex];
+                        }
+                    }
                 }
             }
         });
     </script>
 
+    <!-- Mobile Navigation -->
     <nav class="mobile-nav">
         <a href="index.html">
             <span class="mobile-nav-icon">⌂</span>
@@ -131,6 +158,7 @@
             gallery
         </a>
         <a href="meetme.html">
+            <span class="mobile-nav-icon">☺</span>
             meet me
         </a>
     </nav>

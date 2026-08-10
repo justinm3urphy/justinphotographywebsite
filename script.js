@@ -123,7 +123,9 @@
     let currentIndex = 0;
 
     galleryPhotos.forEach((photo, index) => {
-        currentImages.push(photo.src);
+        // Grids show a small thumbnail (src). The lightbox opens the full-size
+        // original from data-full. Falls back to src if no thumbnail exists.
+        currentImages.push(photo.dataset.full || photo.src);
         photo.addEventListener('click', (e) => {
             currentIndex = index;
             showImage(currentIndex);

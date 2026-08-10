@@ -1,0 +1,179 @@
+﻿# ============================================================
+#  YOUR WEBSITE TEXT
+# ============================================================
+#
+#  HOW TO USE:
+#    1. Change the text UNDER each [heading] below.
+#    2. Save this file.
+#    3. Double-click 'Update-Text.bat'.
+#
+#  RULES:
+#    - Do NOT change the [heading] lines. They tell the script where the text goes.
+#    - Lines starting with # are notes. They are ignored.
+#    - Keep each piece of text on ONE line.
+#    - To write an & symbol, just type &
+#
+# ============================================================
+
+
+# ------------------------------------------------------------
+#  SITE-WIDE  (appears in the footer of every page)
+# ------------------------------------------------------------
+
+[site.footer_tagline]
+Let's work together
+
+[site.email]
+justintangapple@gmail.com
+
+[site.copyright]
+&copy; 2026 Justin Tang
+
+[site.built_with]
+Built with Google Antigravity
+
+
+# ------------------------------------------------------------
+#  HOME PAGE  (index.html)
+# ------------------------------------------------------------
+
+[home.title]
+justin tang
+
+[home.subtitle]
+multidisciplinary creative photographer capturing stories through automotive, aviation, food, and concerts.
+
+[home.about_heading]
+who i am
+
+[home.about_body]
+Hi there! I'm Justin, a multidisciplinary creative photographer aiming to bring ideas to life through creative direction, content creation and visuals on digital platforms as well as in-person marketing campaigns.
+
+[home.based_in]
+Singapore
+
+[home.specialties]
+Automotive, Concerts, Aviation, Food
+
+[home.available]
+Freelance / Commission Work
+
+[home.works_heading]
+selected works
+
+
+# ------------------------------------------------------------
+#  MEET ME PAGE  (meetme.html)
+# ------------------------------------------------------------
+
+[meetme.title]
+justin tang
+
+[meetme.tagline]
+A multidisciplinary creative photographer aiming to bring ideas to life.
+
+[meetme.body]
+I specialize in creative direction, content creation, and visuals on digital platforms. Whether it's using Adobe Creative Suite, snapping photos, editing content, or working with teams to make projects happen, I simply love creating with others to turn visions into reality.
+
+[meetme.location]
+Singapore
+
+
+# ------------------------------------------------------------
+#  GALLERY PAGE  (gallery.html)
+# ------------------------------------------------------------
+
+[gallery.title]
+gallery
+
+[gallery.intro]
+A curated selection of individual frames and standout moments from my favorite shoots.
+
+
+# ------------------------------------------------------------
+#  PROJECT: AUTOMOTIVE
+# ------------------------------------------------------------
+
+[project.automotive.title]
+automotive
+
+[project.automotive.role]
+Role: Creative Director & Photographer
+
+[project.automotive.desc]
+Capturing the speed, design, and raw emotion of performance vehicles. This series focuses on sleek lines and dynamic lighting.
+
+
+# ------------------------------------------------------------
+#  PROJECT: AVIATION
+# ------------------------------------------------------------
+
+[project.aviation.title]
+aviation
+
+[project.aviation.role]
+Role: Photographer
+
+[project.aviation.desc]
+Documenting the power and precision of aviation engineering. High-speed action meets careful composition.
+
+
+# ------------------------------------------------------------
+#  PROJECT: CONCERTS
+# ------------------------------------------------------------
+
+[project.concerts.title]
+concerts
+
+[project.concerts.role]
+Role: Live Photographer
+
+[project.concerts.desc]
+Capturing the raw energy, emotion, and atmosphere of live performances. Working closely with artists to immortalize the stage experience.
+
+
+# ------------------------------------------------------------
+#  PROJECT: FOOD
+# ------------------------------------------------------------
+
+[project.food.title]
+food
+
+[project.food.role]
+Role: Food & Beverage Photographer
+
+[project.food.desc]
+Highlighting textures, colors, and the culinary artistry behind every dish. Careful styling and lighting to make food look as good as it tastes.
+
+
+# ------------------------------------------------------------
+#  PROJECT: FORMULA 1
+# ------------------------------------------------------------
+
+[project.f1.title]
+Formula 1
+
+
+# ------------------------------------------------------------
+#  PROJECT: COMMISSION
+# ------------------------------------------------------------
+
+[project.commission.title]
+commission
+
+[project.commission.role]
+Role: Freelance Photographer
+
+[project.commission.desc]
+Specialized commission works ranging from product launches to lifestyle shoots.
+
+
+# ------------------------------------------------------------
+#  PROJECTS PAGE  (projects.html)
+# ------------------------------------------------------------
+
+[projects.title]
+projects
+
+[projects.intro]
+A collection of editorial pieces, and deep dives into specific visual stories.

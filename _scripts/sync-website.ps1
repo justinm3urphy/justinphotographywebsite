@@ -1,4 +1,59 @@
-﻿$projects = @("automotive", "aviation", "concerts", "food", "commission", "f1")
+﻿Set-Location (Split-Path $PSScriptRoot -Parent)   # site root is one level up
+
+# ---------------------------------------------------------------------------
+# Auto-detect projects from the folders inside images\projects.
+# (This used to be a hardcoded list, so a new project folder was silently
+#  ignored until someone remembered to edit this script.)
+# A project is only used if it also has a matching project-<name>.html page.
+# ---------------------------------------------------------------------------
+$allFolders = @()
+if (Test-Path "images\projects") {
+    $allFolders = Get-ChildItem "images\projects" -Directory | Select-Object -ExpandProperty Name | Sort-Object
+}
+$projects = @()
+$orphans  = @()
+foreach ($folder in $allFolders) {
+    if (Test-Path "project-$folder.html") { $projects += $folder } else { $orphans += $folder }
+}
+if ($projects.Count -eq 0) {
+    Write-Host "No projects found. Expected folders in images\projects with matching project-<name>.html pages." -ForegroundColor Yellow
+}
+if ($orphans.Count -gt 0) {
+    Write-Host ""
+    Write-Host "NOTE: these image folders have no matching web page, so they were skipped:" -ForegroundColor Yellow
+    $orphans | ForEach-Object { Write-Host "        images\projects\$_   (needs project-$_.html)" -ForegroundColor Yellow }
+    Write-Host "      Copy an existing project-*.html and rename it to add one." -ForegroundColor Yellow
+    Write-Host ""
+}
+
+# ---------------------------------------------------------------------------
+# Read the projects.html wording from content.txt (via content.projects.txt).
+# This page is fully regenerated below, so its text CANNOT live in the HTML -
+# it would be wiped on every sync. Edit it in content.txt instead, then run
+# Update-Text.bat, then run this.
+# ---------------------------------------------------------------------------
+$projectsTitle  = "projects"
+$projectsIntro  = "A collection of editorial pieces, and deep dives into specific visual stories."
+$footerTagline  = "Let's work together"
+$footerEmail    = "justintangapple@gmail.com"
+$footerCopy     = "&copy; 2026 Justin Tang"
+$footerBuilt    = "Built with Google Antigravity"
+
+if (Test-Path "$PSScriptRoot\content.projects.txt") {
+    foreach ($line in (Get-Content "$PSScriptRoot\content.projects.txt" -Encoding UTF8)) {
+        if ($line -match '^\s*#') { continue }
+        if ($line -match '^\s*projects\.title\s*=\s*(.+)$')       { $projectsTitle = $matches[1].Trim() }
+        if ($line -match '^\s*projects\.intro\s*=\s*(.+)$')       { $projectsIntro = $matches[1].Trim() }
+        if ($line -match '^\s*site\.footer_tagline\s*=\s*(.+)$')  { $footerTagline = $matches[1].Trim() }
+        if ($line -match '^\s*site\.email\s*=\s*(.+)$')           { $footerEmail   = $matches[1].Trim() }
+        if ($line -match '^\s*site\.copyright\s*=\s*(.+)$')       { $footerCopy    = $matches[1].Trim() }
+        if ($line -match '^\s*site\.built_with\s*=\s*(.+)$')      { $footerBuilt   = $matches[1].Trim() }
+    }
+    Write-Host "Using projects.html wording from content.projects.txt"
+} else {
+    Write-Host "content.projects.txt not found - using built-in default wording."
+    Write-Host "  (Run Update-Text.bat first if you've edited content.txt)"
+}
 
 Write-Host "Syncing website images..."
 
@@ -71,88 +126,18 @@ foreach ($p in $projects) {
         }
         
         # Inject JS
-        $content = $content -replace "(?s)<!-- BANNER SCRIPT -->.*
-    <!-- Mobile Navigation -->
-    <nav class="mobile-nav">
-        <a href="index.html">
-            <span class="mobile-nav-icon">⌂</span>
-            home
-        </a>
-        <a href="projects.html">
-            <span class="mobile-nav-icon">▦</span>
-            projects
-        </a>
-        <a href="gallery.html">
-            <span class="mobile-nav-icon">◱</span>
-            gallery
-        </a>
-        <a href="meetme.html">
-            <span class="mobile-nav-icon">☺</span>
-            meet me
-        </a>
-    </nav>
-</body>", "
-    <!-- Mobile Navigation -->
-    <nav class="mobile-nav">
-        <a href="index.html">
-            <span class="mobile-nav-icon">⌂</span>
-            home
-        </a>
-        <a href="projects.html">
-            <span class="mobile-nav-icon">▦</span>
-            projects
-        </a>
-        <a href="gallery.html">
-            <span class="mobile-nav-icon">◱</span>
-            gallery
-        </a>
-        <a href="meetme.html">
-            <span class="mobile-nav-icon">☺</span>
-            meet me
-        </a>
-    </nav>
-</body>"
-        $content = $content -replace "
-    <!-- Mobile Navigation -->
-    <nav class="mobile-nav">
-        <a href="index.html">
-            <span class="mobile-nav-icon">⌂</span>
-            home
-        </a>
-        <a href="projects.html">
-            <span class="mobile-nav-icon">▦</span>
-            projects
-        </a>
-        <a href="gallery.html">
-            <span class="mobile-nav-icon">◱</span>
-            gallery
-        </a>
-        <a href="meetme.html">
-            <span class="mobile-nav-icon">☺</span>
-            meet me
-        </a>
-    </nav>
-</body>", "<!-- BANNER SCRIPT -->`r`n$bannerJS`r`n
-    <!-- Mobile Navigation -->
-    <nav class="mobile-nav">
-        <a href="index.html">
-            <span class="mobile-nav-icon">⌂</span>
-            home
-        </a>
-        <a href="projects.html">
-            <span class="mobile-nav-icon">▦</span>
-            projects
-        </a>
-        <a href="gallery.html">
-            <span class="mobile-nav-icon">◱</span>
-            gallery
-        </a>
-        <a href="meetme.html">
-            <span class="mobile-nav-icon">☺</span>
-            meet me
-        </a>
-    </nav>
-</body>"
+        # ---------------------------------------------------------------
+        # REWRITTEN. The original tried to match the entire mobile-nav block
+        # as a literal string with unescaped double quotes, which was a
+        # PowerShell parse error - this whole script could never run.
+        # It also hard-coded a mobile-nav layout that no longer matches the
+        # HTML. Anchoring on </body> is simpler and cannot drift.
+        # ---------------------------------------------------------------
+        $content = $content -replace "(?s)\s*<!-- BANNER SCRIPT -->.*?<!-- /BANNER SCRIPT -->", ""
+        if ($bannerJS -ne "") {
+            $block = "`r`n<!-- BANNER SCRIPT -->`r`n" + $bannerJS + "`r`n<!-- /BANNER SCRIPT -->`r`n"
+            $content = $content.Replace("</body>", $block + "</body>")
+        }
         
         # --- Masonry Gallery ---
         $htmlStr = ""
@@ -161,7 +146,9 @@ foreach ($p in $projects) {
             if (Test-Path "images\projects\$p\$fmt") {
                 $imgs = Get-ChildItem -Path "images\projects\$p\$fmt" -File | Where-Object { $_.Extension -match "\.(jpg|jpeg|png|webp)$" }
                 foreach ($img in $imgs) {
-                    $htmlStr += "            <div class=`"gallery-photo reveal`"><img src=`"images/projects/$p/$fmt/" + $img.Name + "`" alt=`"$p detail`" loading=`"lazy`"></div>`r`n"
+                    $full  = "images/projects/$p/$fmt/" + $img.Name
+                    $thumb = if (Test-Path "images\projects\$p\$fmt\thumbs\$($img.Name)") { "images/projects/$p/$fmt/thumbs/" + $img.Name } else { $full }
+                    $htmlStr += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"$p detail`" loading=`"lazy`"></div>`r`n"
                 }
             }
         }
@@ -264,8 +251,8 @@ $projectsContent = @"
 
     <!-- Projects Header -->
     <section class="container" style="padding-top: 20vh; padding-bottom: 5vh;">
-        <h1 class="huge-text reveal">projects</h1>
-        <p class="reveal" style="margin-top: 2rem; max-width: 800px;">A collection of editorial pieces, and deep dives into specific visual stories.</p>
+        <h1 class="huge-text reveal">$projectsTitle</h1>
+        <p class="reveal" style="margin-top: 2rem; max-width: 800px;">$projectsIntro</p>
     </section>
 
     <!-- Projects List -->
@@ -279,13 +266,18 @@ $projectsHtmlStr
     <footer>
         <div class="footer-content">
             <div>
-                <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Let's work together</p>
-                <a href="mailto:justintangapple@gmail.com" class="footer-email">justintangapple@gmail.com</a>
+                <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;"><!--T:site.footer_tagline-->$footerTagline<!--/T--></p>
+                <a href="mailto:$footerEmail" class="footer-email"><!--T:site.email-->$footerEmail<!--/T--></a>
+            </div>
+            <div class="footer-socials" style="display: flex; flex-direction: column; gap: 0.5rem; text-align: right;">
+                <a href="https://www.instagram.com/just.in02/" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.7); font-size: 0.875rem;">Main Instagram &#8599;</a>
+                <a href="https://www.instagram.com/airbornearchives/" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.7); font-size: 0.875rem;">Aviation Instagram &#8599;</a>
+                <a href="https://www.linkedin.com/in/justin-tang-kai-yuan/" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.7); font-size: 0.875rem;">LinkedIn &#8599;</a>
             </div>
         </div>
         <div class="footer-bottom">
-            <span>&copy; 2026 Justin Tang</span>
-            <span>built with google antigravity</span>
+            <span><!--T:site.copyright-->$footerCopy<!--/T--></span>
+            <span><!--T:site.built_with-->$footerBuilt<!--/T--></span>
         </div>
     </footer>
 
@@ -344,7 +336,9 @@ foreach ($p in $projects) {
         if (Test-Path "images\projects\$p\$fmt") {
             $imgs = Get-ChildItem -Path "images\projects\$p\$fmt" -File | Where-Object { $_.Extension -match "\.(jpg|jpeg|png|webp)$" }
             foreach ($img in $imgs) {
-                $htmlStrGallery += "            <div class=`"gallery-photo reveal`"><img src=`"images/projects/$p/$fmt/" + $img.Name + "`" alt=`"$p`" loading=`"lazy`"></div>`r`n"
+                $full  = "images/projects/$p/$fmt/" + $img.Name
+                $thumb = if (Test-Path "images\projects\$p\$fmt\thumbs\$($img.Name)") { "images/projects/$p/$fmt/thumbs/" + $img.Name } else { $full }
+                $htmlStrGallery += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"$p`" loading=`"lazy`"></div>`r`n"
             }
         }
     }
@@ -354,7 +348,9 @@ foreach ($fmt in $formats) {
     if (Test-Path "images\gallery\$fmt") {
         $imgs = Get-ChildItem -Path "images\gallery\$fmt" -File | Where-Object { $_.Extension -match "\.(jpg|jpeg|png|webp)$" }
         foreach ($img in $imgs) {
-            $htmlStrGallery += "            <div class=`"gallery-photo reveal`"><img src=`"images/gallery/$fmt/" + $img.Name + "`" alt=`"gallery`" loading=`"lazy`"></div>`r`n"
+            $full  = "images/gallery/$fmt/" + $img.Name
+            $thumb = if (Test-Path "images\gallery\$fmt\thumbs\$($img.Name)") { "images/gallery/$fmt/thumbs/" + $img.Name } else { $full }
+            $htmlStrGallery += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"gallery`" loading=`"lazy`"></div>`r`n"
         }
     }
 }
@@ -383,7 +379,16 @@ if (Test-Path "index.html") {
     if ($heroImgs.Count -gt 0) {
         $randomHero = $heroImgs | Get-Random
         $heroPath = "images/main_page/background/" + $randomHero.Name
-        $indexContent = $indexContent -replace "(?s)<img src=`"images/hero/.*?`" alt=`"Justin Photography`" class=`"hero-image`" id=`"hero-img`">", "<img src=`"$heroPath`" alt=`"Justin Photography`" class=`"hero-image`" id=`"hero-img`">"
+        # Match ANY current src/alt - the old pattern hard-coded "images/hero/" and
+        # alt="Justin Photography", neither of which the file actually contains, so
+        # the hero never rotated. Anchored on id="hero-img", which is unique.
+        $heroPattern = '<img src="[^"]*" alt="[^"]*" class="hero-image" id="hero-img">'
+        if ($indexContent -match $heroPattern) {
+            $indexContent = $indexContent -replace $heroPattern, "<img src=`"$heroPath`" alt=`"Justin Tang Photography`" class=`"hero-image`" id=`"hero-img`">"
+            Write-Host "Hero image set to: $($randomHero.Name)"
+        } else {
+            Write-Host "WARNING: could not find the hero image tag in index.html - hero not rotated." -ForegroundColor Yellow
+        }
     }
     
     # Selected Works Dynamic Generation
