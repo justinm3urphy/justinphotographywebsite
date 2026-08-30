@@ -1,4 +1,5 @@
 ﻿Set-Location (Split-Path $PSScriptRoot -Parent)   # site root is one level up
+Add-Type -AssemblyName System.Drawing
 
 # ---------------------------------------------------------------------------
 # Auto-detect projects from the folders inside images\projects.
@@ -29,6 +30,32 @@ if ($orphans.Count -gt 0) {
 # ---------------------------------------------------------------------------
 # Normalise trailing blank lines: Set-Content used to append a newline on
 # every run, so each build silently grew every page by one blank line.
+
+# Cache of thumbnail dimensions. Emitting width/height on every grid image lets
+# the browser reserve the correct space before the photo loads, which is what
+# stops the masonry grid jumping around as you scroll.
+$script:DimCache = @{}
+function Get-ImageDims($relPath) {
+    if ($script:DimCache.ContainsKey($relPath)) { return $script:DimCache[$relPath] }
+    $dims = $null
+    try {
+        # .NET accepts forward slashes on Windows, so no separator swap is needed.
+        $full = Join-Path (Get-Location) $relPath
+        if (Test-Path $full) {
+            $img = [System.Drawing.Image]::FromFile($full)
+            $dims = @{ w = $img.Width; h = $img.Height }
+            $img.Dispose()
+        }
+    } catch { $dims = $null }
+    $script:DimCache[$relPath] = $dims
+    return $dims
+}
+function Get-DimAttrs($relPath) {
+    $d = Get-ImageDims $relPath
+    if ($d) { return (" width=`"" + $d.w + "`" height=`"" + $d.h + "`"") }
+    return ""
+}
+
 function Write-Page($Path,$Text) {
     # Trim every trailing newline, then add back exactly one.
     # Set-Content used to append a newline on top of the one already there,
@@ -158,7 +185,7 @@ foreach ($p in $projects) {
                 foreach ($img in $imgs) {
                     $full  = "images/projects/$p/$fmt/" + $img.Name
                     $thumb = if (Test-Path "images\projects\$p\$fmt\thumbs\$($img.Name)") { "images/projects/$p/$fmt/thumbs/" + $img.Name } else { $full }
-                    $htmlStr += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"$p detail`" loading=`"lazy`"></div>`r`n"
+                    $htmlStr += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"$p detail`" loading=`"lazy`" decoding=`"async`"$(Get-DimAttrs $thumb)></div>`r`n"
                 }
             }
         }
@@ -348,7 +375,7 @@ foreach ($p in $projects) {
             foreach ($img in $imgs) {
                 $full  = "images/projects/$p/$fmt/" + $img.Name
                 $thumb = if (Test-Path "images\projects\$p\$fmt\thumbs\$($img.Name)") { "images/projects/$p/$fmt/thumbs/" + $img.Name } else { $full }
-                $htmlStrGallery += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"$p`" loading=`"lazy`"></div>`r`n"
+                $htmlStrGallery += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"$p`" loading=`"lazy`" decoding=`"async`"$(Get-DimAttrs $thumb)></div>`r`n"
             }
         }
     }
@@ -360,7 +387,7 @@ foreach ($fmt in $formats) {
         foreach ($img in $imgs) {
             $full  = "images/gallery/$fmt/" + $img.Name
             $thumb = if (Test-Path "images\gallery\$fmt\thumbs\$($img.Name)") { "images/gallery/$fmt/thumbs/" + $img.Name } else { $full }
-            $htmlStrGallery += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"gallery`" loading=`"lazy`"></div>`r`n"
+            $htmlStrGallery += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"gallery`" loading=`"lazy`" decoding=`"async`"$(Get-DimAttrs $thumb)></div>`r`n"
         }
     }
 }
@@ -394,7 +421,7 @@ if (Test-Path "index.html") {
         # the hero never rotated. Anchored on id="hero-img", which is unique.
         $heroPattern = '<img src="[^"]*" alt="[^"]*" class="hero-image" id="hero-img">'
         if ($indexContent -match $heroPattern) {
-            $indexContent = $indexContent -replace $heroPattern, "<img src=`"$heroPath`" alt=`"Justin Tang Photography`" class=`"hero-image`" id=`"hero-img`">"
+            $indexContent = $indexContent -replace $heroPattern, "<img src=`"$heroPath`" alt=`"Justin Tang Photography`" class=`"hero-image`" id=`"hero-img`" fetchpriority=`"high`" decoding=`"async`">"
             Write-Host "Hero image set to: $($randomHero.Name)"
         } else {
             Write-Host "WARNING: could not find the hero image tag in index.html - hero not rotated." -ForegroundColor Yellow

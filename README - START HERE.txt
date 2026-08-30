@@ -71,8 +71,10 @@ TO ADD PHOTOS
        images\projects\<project name>\4x5\    (or 5x4 / 16x9)
        images\gallery\4x5\                    (or 5x4 / 16x9)
 
-     Export around 2000px on the long edge, like your existing
-     ones. Never put anything in a "thumbs" folder.
+     Export at whatever size you like from Lightroom. The
+     updater shrinks anything bigger than 2000px on the long
+     edge automatically, before it ever reaches the website.
+     Never put anything in a "thumbs" folder.
 
   2. Double-click  UPDATE WEBSITE.bat
 
@@ -161,6 +163,38 @@ I want to see what changed before committing
 
 
 ===============================================================
+ PHOTO SIZES  (why you can export big from Lightroom)
+===============================================================
+
+You do not need to think about export size any more.
+
+UPDATE WEBSITE.bat now shrinks photos for you, in this order:
+
+  1. Any photo over 2000px on the long edge is resized down to
+     2000px and saved at quality 85.
+  2. Anything still over 2MB is re-encoded.
+  3. Everything else is left completely alone.
+  4. Then thumbnails (600px) are made from the result.
+
+So a 6000px, 3MB Lightroom export becomes about 400KB before it
+ever reaches the site. Tested: 3,248 KB -> 387 KB.
+
+TWO THINGS WORTH KNOWING
+
+  - It edits the photo in the images\ folder IN PLACE. Your
+    Lightroom catalogue is the master copy - the website folder
+    is not a backup, and never was.
+
+  - Each photo is processed ONCE. A record is kept in
+    _scripts\.optimized.json so the same photo is never
+    re-compressed twice. That matters: every JPEG re-encode
+    loses a little quality, and doing it on every build would
+    slowly degrade your whole library.
+
+Photos already on the site are untouched - they are all within
+the limits already.
+
+===============================================================
  MOBILE
 ===============================================================
 
@@ -219,11 +253,11 @@ room. One line of CSS if you want it.
    Your original photos were never modified - clicking a photo
    still opens the full-resolution file.
 
-7. Optimize-Images.ps1 DID NOTHING.
-   It only acts on files over 1 MB AND wider than 2000px. All of
-   your photos are already under 2000px, so it skipped every one
-   while reporting success. It's parked in _scripts\ and can be
-   deleted.
+7. Optimize-Images.ps1 DID NOTHING (now rewritten).
+   The old one only acted on files over 1 MB AND wider than
+   2000px, so it skipped every photo while reporting success.
+   It has been replaced with a working version that runs as
+   part of the updater - see PHOTO SIZES below.
 
 
 ===============================================================

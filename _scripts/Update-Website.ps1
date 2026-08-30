@@ -18,7 +18,7 @@ $ErrorActionPreference = "Stop"
 function Step($n, $title) {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Cyan
-    Write-Host "  STEP $n of 3 - $title" -ForegroundColor Cyan
+    Write-Host "  STEP $n of 4 - $title" -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor Cyan
 }
 
@@ -59,8 +59,22 @@ try {
     $failed = $true
 }
 
-# --- 2. thumbnails -----------------------------------------------------------
-Step 2 "Making thumbnails for any new photos"
+# --- 2. shrink oversized exports ---------------------------------------------
+# Runs BEFORE thumbnails so thumbnails are made from the web-sized photo.
+Step 2 "Shrinking any oversized photos"
+try {
+    if (Test-Path "$PSScriptRoot\Optimize-Images.ps1") {
+        & powershell -NoProfile -ExecutionPolicy Bypass -File "$PSScriptRoot\Optimize-Images.ps1"
+    } else {
+        Write-Host "  Optimize-Images.ps1 not found - skipping." -ForegroundColor Yellow
+    }
+} catch {
+    Write-Host "  PROBLEM: $_" -ForegroundColor Red
+    $failed = $true
+}
+
+# --- 3. thumbnails -----------------------------------------------------------
+Step 3 "Making thumbnails for any new photos"
 try {
     if (Test-Path "$PSScriptRoot\Make-Thumbnails.ps1") {
         & powershell -NoProfile -ExecutionPolicy Bypass -File "$PSScriptRoot\Make-Thumbnails.ps1"
@@ -72,8 +86,8 @@ try {
     $failed = $true
 }
 
-# --- 3. rebuild pages --------------------------------------------------------
-Step 3 "Rebuilding the photo grids and pages"
+# --- 4. rebuild pages --------------------------------------------------------
+Step 4 "Rebuilding the photo grids and pages"
 try {
     & powershell -NoProfile -ExecutionPolicy Bypass -File "$PSScriptRoot\sync-website.ps1"
 } catch {

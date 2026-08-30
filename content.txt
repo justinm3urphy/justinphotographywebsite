@@ -153,6 +153,12 @@ Highlighting textures, colors, and the culinary artistry behind every dish. Care
 [project.f1.title]
 Formula 1
 
+[project.f1.role]
+Role: Designer
+
+[project.f1.desc]
+Graphic design and creative direction for Formula 1 promotional materials.
+
 
 # ------------------------------------------------------------
 #  PROJECT: COMMISSION
