@@ -249,8 +249,15 @@ $projectsContent = @"
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Longer bodies of work, grouped by what they were for. Automotive, aviation, concerts, food and commissions.">
     <title>Projects — Justin Tang</title>
     <link rel="stylesheet" href="styles.css">
+    <meta property="og:title" content="Projects — Justin Tang">
+    <meta property="og:description" content="Longer bodies of work, grouped by what they were for. Automotive, aviation, concerts, food and commissions.">
+    <meta property="og:image" content="https://cogroup.studio/images/main_page/background/MSP08212.jpg">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cogroup.studio/projects.html">
+    <meta name="twitter:card" content="summary_large_image">
     <style>
         .works-grid {
             display: grid;

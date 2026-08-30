@@ -21,7 +21,7 @@
 # ------------------------------------------------------------
 
 [site.footer_tagline]
-Let's work together
+Got something in mind?
 
 [site.email]
 justintangapple@gmail.com
@@ -41,13 +41,13 @@ Built with Google Antigravity
 justin tang
 
 [home.subtitle]
-multidisciplinary creative photographer capturing stories through automotive, aviation, food, and concerts.
+I photograph cars, aircraft, live music and food. Based in Singapore, open for commissions.
 
 [home.about_heading]
 who i am
 
 [home.about_body]
-Hi there! I'm Justin, a multidisciplinary creative photographer aiming to bring ideas to life through creative direction, content creation and visuals on digital platforms as well as in-person marketing campaigns.
+I'm Justin. Most of what I photograph has an engine in it, though I shoot a fair amount of live music and food as well. I also take on creative direction and content work, usually as part of a team rather than on my own. If you've got something in mind, tell me about it.
 
 [home.based_in]
 Singapore
@@ -70,10 +70,10 @@ selected works
 justin tang
 
 [meetme.tagline]
-A multidisciplinary creative photographer aiming to bring ideas to life.
+A photographer in Singapore, usually somewhere near something loud.
 
 [meetme.body]
-I specialize in creative direction, content creation, and visuals on digital platforms. Whether it's using Adobe Creative Suite, snapping photos, editing content, or working with teams to make projects happen, I simply love creating with others to turn visions into reality.
+I'm Justin. I photograph cars, aircraft, concerts and food, and I do creative direction and content work when a project calls for it. I like working with other people on things: most of the work I'm happiest with came out of a team rather than a solo shoot. If you'd like to work together, send me an email.
 
 [meetme.location]
 Singapore
@@ -87,7 +87,7 @@ Singapore
 gallery
 
 [gallery.intro]
-A curated selection of individual frames and standout moments from my favorite shoots.
+Single frames that never belonged to a particular project. Some are favourites, some just stuck with me.
 
 
 # ------------------------------------------------------------
@@ -101,7 +101,7 @@ automotive
 Role: Creative Director & Photographer
 
 [project.automotive.desc]
-Capturing the speed, design, and raw emotion of performance vehicles. This series focuses on sleek lines and dynamic lighting.
+Cars, usually after dark. I like what happens when a good paint job meets bad lighting.
 
 
 # ------------------------------------------------------------
@@ -115,7 +115,7 @@ aviation
 Role: Photographer
 
 [project.aviation.desc]
-Documenting the power and precision of aviation engineering. High-speed action meets careful composition.
+Aircraft, on the ground and in the air. A lot of this one is standing in the heat waiting for something to move.
 
 
 # ------------------------------------------------------------
@@ -129,7 +129,7 @@ concerts
 Role: Live Photographer
 
 [project.concerts.desc]
-Capturing the raw energy, emotion, and atmosphere of live performances. Working closely with artists to immortalize the stage experience.
+Live music, shot from the pit and wherever else I can get to. Bad light, no second takes, which is most of the appeal.
 
 
 # ------------------------------------------------------------
@@ -143,7 +143,7 @@ food
 Role: Food & Beverage Photographer
 
 [project.food.desc]
-Highlighting textures, colors, and the culinary artistry behind every dish. Careful styling and lighting to make food look as good as it tastes.
+Food, shot so it looks like something you'd actually want to eat. Mostly styling, patience, and one plate going cold.
 
 
 # ------------------------------------------------------------
@@ -157,7 +157,7 @@ Formula 1
 Role: Designer
 
 [project.f1.desc]
-Graphic design and creative direction for Formula 1 promotional materials.
+Design work rather than photography. Graphic design and creative direction for Formula 1 promotional material.
 
 
 # ------------------------------------------------------------
@@ -171,7 +171,7 @@ commission
 Role: Freelance Photographer
 
 [project.commission.desc]
-Specialized commission works ranging from product launches to lifestyle shoots.
+Work people have hired me for: product launches, lifestyle shoots, and the things that didn't fit anywhere else.
 
 
 # ------------------------------------------------------------
@@ -182,4 +182,4 @@ Specialized commission works ranging from product launches to lifestyle shoots.
 projects
 
 [projects.intro]
-A collection of editorial pieces, and deep dives into specific visual stories.
+Longer bodies of work, grouped by what they were for.
