@@ -10,6 +10,8 @@
 #  Run it by double-clicking "Update Website.bat"
 # ============================================================
 
+param([switch]$NoPause)   # -NoPause: skip the "Press Enter" at the end (for automation)
+
 Set-Location (Split-Path $PSScriptRoot -Parent)   # site root is one level up
 $ErrorActionPreference = "Stop"
 
@@ -102,22 +104,30 @@ foreach ($f in (Get-ChildItem -Filter "*.html" | Sort-Object Name)) {
 Write-Host ""
 $problems = @()
 
-# broken image links
-# NOTE: strip HTML comments first. Some pages carry commented-out template
-# examples (e.g. the "SLICED IMAGE SHOWCASE" block in project-aviation.html)
-# whose image paths don't exist. They never render, so they are not broken.
+# broken links - images, page-to-page links, and lightbox targets.
+# NOTE: strip HTML comments first. Commented-out template examples never
+# render, so their paths are not broken links.
+# This used to check only src="images/..." - which meant a dead href (a nav
+# or project link) or a dead data-full (the full-size photo the lightbox
+# opens) shipped silently. Now every local reference is checked.
 $missing = @()
 foreach ($f in (Get-ChildItem -Filter "*.html")) {
     $c = Get-Content $f.Name -Raw
     $live = [regex]::Replace($c, '(?s)<!--.*?-->', '')
-    foreach ($m in [regex]::Matches($live, 'src="(images/[^"]+)"')) {
-        if (-not (Test-Path ($m.Groups[1].Value -replace '/','\'))) {
-            $missing += "$($f.Name): $($m.Groups[1].Value)"
+    foreach ($m in [regex]::Matches($live, '(?:src|href|data-full)\s*=\s*"([^"]+)"')) {
+        $u = $m.Groups[1].Value.Trim()
+        if ($u -eq "") { continue }
+        if ($u -match '^(#|mailto:|tel:|javascript:|data:)') { continue }
+        if ($u -match '^(https?:)?//') { continue }
+        $rel = [uri]::UnescapeDataString((($u -split '[?#]')[0]).TrimStart('/'))
+        if ($rel -eq "") { continue }
+        if (-not (Test-Path ($rel.Replace('/','\')))) {
+            $missing += "$($f.Name): $u"
         }
     }
 }
 if ($missing.Count -gt 0) {
-    $problems += "$($missing.Count) image link(s) point at files that don't exist:"
+    $problems += "$($missing.Count) link(s) point at files that don't exist:"
     $missing | Select-Object -First 8 | ForEach-Object { $problems += "      $_" }
 }
 
@@ -152,7 +162,7 @@ if ($noThumb -gt 0) { $problems += "$noThumb grid image(s) are loading full-size
 
 if ($problems.Count -eq 0) {
     Write-Host "  Checks passed:" -ForegroundColor Green
-    Write-Host "    - all image links resolve" -ForegroundColor Green
+    Write-Host "    - all links resolve (photos, page links, lightbox targets)" -ForegroundColor Green
     Write-Host "    - every page has a viewport tag, styles.css and mobile nav" -ForegroundColor Green
     Write-Host "    - mobile nav identical on all pages ($($shapes[0]) icons/links)" -ForegroundColor Green
     Write-Host "    - all grid images use thumbnails" -ForegroundColor Green
@@ -177,4 +187,4 @@ Write-Host "         git push"
 Write-Host ""
 Write-Host "############################################################"
 Write-Host ""
-Read-Host "Press Enter to close"
+if (-not $NoPause) { Read-Host "Press Enter to close" }

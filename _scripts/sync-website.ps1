@@ -27,6 +27,16 @@ if ($orphans.Count -gt 0) {
 }
 
 # ---------------------------------------------------------------------------
+# Normalise trailing blank lines: Set-Content used to append a newline on
+# every run, so each build silently grew every page by one blank line.
+function Write-Page($Path,$Text) {
+    # Trim every trailing newline, then add back exactly one.
+    # Set-Content used to append a newline on top of the one already there,
+    # so every build silently grew each page by one blank line.
+    $Text = $Text.TrimEnd([char]13,[char]10) + [char]13 + [char]10
+    Set-Content -Path $Path -Value $Text -Encoding UTF8 -NoNewline
+}
+
 # Read the projects.html wording from content.txt (via content.projects.txt).
 # This page is fully regenerated below, so its text CANNOT live in the HTML -
 # it would be wiped on every sync. Edit it in content.txt instead, then run
@@ -160,7 +170,7 @@ foreach ($p in $projects) {
         $replacement = "<div class=`"gallery-masonry`">`r`n$htmlStr        </div>`r`n    </section>"
         $content = $content -replace $pattern, $replacement
         
-        Set-Content -Path $file -Value $content -Encoding UTF8
+        Write-Page $file $content
     }
 }
 
@@ -326,7 +336,7 @@ $projectsJsObject
 </body>
 </html>
 "@
-Set-Content -Path "projects.html" -Value $projectsContent -Encoding UTF8
+Write-Page "projects.html" $projectsContent
 
 # 3. Update Master Gallery Page
 $htmlStrGallery = ""
@@ -364,7 +374,7 @@ if (Test-Path $fileGallery) {
     }
     $replacement = "<div class=`"gallery-masonry`">`r`n$htmlStrGallery        </div>`r`n    </section>"
     $newContent = $content -replace $pattern, $replacement
-    Set-Content -Path $fileGallery -Value $newContent -Encoding UTF8
+    Write-Page $fileGallery $newContent
 }
 
 # 4. UPDATE INDEX.HTML HERO AND SELECTED WORKS
@@ -392,12 +402,15 @@ if (Test-Path "index.html") {
     }
     
     # Selected Works Dynamic Generation
-    $shuffledProjects = $projects | Get-Random -Count 5
+    # Never ask for more projects than exist - Get-Random -Count 5 with fewer
+    # than 5 projects returned a short list, and the loop below then emitted
+    # <a href="project-.html"> dead links (or crashed on .Substring).
+    $slots = [Math]::Min(5, $projects.Count)
+    $shuffledProjects = @($projects | Get-Random -Count $slots)
     $worksHtml = ""
-    $styles = @("large", "medium", "tall", "medium", "large")
     $delays = @("", " style=`"transition-delay: 0.1s`"", " style=`"transition-delay: 0.2s`"", "", " style=`"transition-delay: 0.1s`"")
     
-    for ($i=0; $i -lt 5; $i++) {
+    for ($i=0; $i -lt $slots; $i++) {
         $p = $shuffledProjects[$i]
         
         if ($p -eq "f1") {
@@ -434,7 +447,7 @@ if (Test-Path "index.html") {
                 </div>
             </a>
 "@
-        if ($i -ne 4) { $worksHtml += "`r`n" }
+        if ($i -ne ($slots-1)) { $worksHtml += "`r`n" }
     }
     
     $pattern = "(?s)<div class=`"works-grid`">.*?</div>\s*</section>"
@@ -444,7 +457,7 @@ if (Test-Path "index.html") {
     $replacement = "<div class=`"bento-grid`">`r`n$worksHtml`r`n        </div>`r`n    </section>"
     
     $indexContent = $indexContent -replace $pattern, $replacement
-    Set-Content -Path "index.html" -Value $indexContent -Encoding UTF8
+    Write-Page "index.html" $indexContent
 }
 
 Write-Host "Sync Complete! All HTML files updated."
