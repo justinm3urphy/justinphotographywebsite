@@ -384,15 +384,6 @@ section {
 }
 
 /* ============================================================
-   SPOTIFY
-   ============================================================ */
-.spotify-wrapper {
-    border-radius: 12px;
-    overflow: hidden;
-    background: #121212;
-}
-
-/* ============================================================
    CLIENTS
    ============================================================ */
 .clients-grid {
@@ -744,10 +735,6 @@ footer {
         text-align: left !important;
     }
 
-    .spotify-wrapper {
-        margin-top: 2rem !important;
-        margin-bottom: 2rem !important;
-    }
 
     .info-list li {
         flex-direction: column !important;
@@ -864,69 +851,3 @@ footer {
         right: 0.5rem;
     }
 }
-
-/* ==========================================================================
-   PERSISTENT MUSIC PLAYER DOCK
-   Fixed so it is never re-parented - moving an iframe reloads it and the
-   music stops. Sits above the mobile bottom nav, clear of the iPhone notch.
-   ========================================================================== */
-#player-dock {
-    position: fixed;
-    bottom: 1.25rem;
-    right: 1.25rem;
-    width: 320px;
-    max-width: calc(100vw - 2.5rem);
-    z-index: 1200;
-    border-radius: 12px;
-    overflow: hidden;
-    background: var(--accent, #222);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
-    transition: transform 0.35s ease, opacity 0.35s ease;
-}
-
-#player-dock iframe {
-    display: block;
-    width: 100%;
-    border: 0;
-}
-
-#player-dock .player-toggle {
-    position: absolute;
-    top: 4px;
-    right: 6px;
-    z-index: 2;
-    width: 22px;
-    height: 22px;
-    line-height: 20px;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.55);
-    color: #fff;
-    font-size: 15px;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-#player-dock:hover .player-toggle,
-#player-dock:focus-within .player-toggle { opacity: 1; }
-
-/* Collapsed: slides away but keeps playing. A sliver stays grabbable. */
-#player-dock.collapsed { transform: translateY(calc(100% - 26px)); }
-#player-dock.collapsed .player-toggle { opacity: 1; }
-
-@media (max-width: 768px) {
-    #player-dock {
-        right: 0.75rem;
-        left: 0.75rem;
-        width: auto;
-        max-width: none;
-        /* clear the fixed bottom nav (approx 4.5rem) plus the notch inset */
-        bottom: calc(4.5rem + env(safe-area-inset-bottom));
-    }
-    #player-dock.collapsed { transform: translateY(calc(100% - 22px)); }
-}
-
-/* Content fades on soft navigation; the player dock must not. */
-#site-content { transition: opacity 0.25s ease; }
