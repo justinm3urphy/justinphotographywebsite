@@ -1,75 +1,45 @@
-# Justin Tang — Photography Portfolio (cogroup.studio)
+# Justin Tang — Photography Portfolio
 
-This is the source code for your custom photography portfolio. It is built purely with HTML, CSS, and JavaScript for maximum performance and complete creative control.
+Source for **[cogroup.studio](https://cogroup.studio)**. Static HTML/CSS/JS, no framework,
+deployed by GitHub Pages from `main`.
 
----
+## Updating the site
 
-## 🚀 How to Update Your Website
+**Read `README - START HERE.txt` — it is the manual.** The short version:
 
-Your website is connected to GitHub. This means your code acts as the "source of truth". To update your live website, you simply edit the files on your computer and push them to GitHub. 
+1. Change wording in **`content.txt`** (never in the `.html` files — they're generated).
+   Add or remove photos in **`images/`**.
+2. Run **`UPDATE WEBSITE.bat`**. It rebuilds every page, makes thumbnails, and checks for
+   broken links and mobile problems. Fix anything it reports as a PROBLEM.
+3. Check it in a browser, including at phone width.
+4. Publish:
+   ```bash
+   git add .
+   git commit -m "Added new automotive photos"
+   git push
+   ```
+   Live in about 60 seconds. Hard-refresh with Ctrl+F5 if you don't see it.
 
-### Step 1: Make your changes locally
-1. Open the project folder in your text editor (like VS Code).
-2. Edit your HTML files to add new text, or drop new images into the `images/` folders.
-3. You can preview your changes locally by just double-clicking any `.html` file, or by using the VS Code "Live Server" extension.
+To undo a bad publish: `git revert HEAD && git push`.
 
-### Step 2: Push changes to GitHub
-Once you are happy with how your changes look locally, open your terminal (PowerShell or Command Prompt) inside your project folder and run these three commands:
+## Structure
 
-```bash
-# 1. Stage all your new changes
-git add .
+| Path | What it is |
+|---|---|
+| `content.txt` | **All site wording.** Edit this, not the HTML. Never rename a `[heading]`. |
+| `images/` | All photos. `projects/<name>/4x5/`, `gallery/4x5/`, `main_page/background/`. `thumbs/` is auto-generated — don't touch. |
+| `styles.css` | All styling. Global colours are the `:root` variables at the top. |
+| `script.js` | Lightbox and page transitions. |
+| `index.html`, `gallery.html`, `meetme.html`, `projects.html`, `project-*.html` | Generated pages. Must stay in this top folder or Pages won't find them. |
+| `_scripts/` | The build machinery. `UPDATE WEBSITE.bat` runs it; you don't need to open it. |
+| `CNAME` | The custom domain. Don't delete it — the domain breaks. |
 
-# 2. Save the changes with a short message describing what you did
-git commit -m "Added new photos to automotive project"
+**Adding a whole new project album** takes two steps: create `images/projects/<name>/4x5/`
+*and* copy an existing `project-*.html` to `project-<name>.html`. The build warns you if the
+folder exists without a page.
 
-# 3. Upload the changes to GitHub
-git push
-```
+## Domain
 
-### Step 3: Wait 60 Seconds
-The moment you run `git push`, GitHub Pages will automatically detect your new code, build the website, and deploy it to `https://cogroup.studio`. Within a minute or two, your live website will be perfectly updated.
-
----
-
-## 🌐 Connecting Your Domain (One-Time Setup)
-
-If you haven't linked your `cogroup.studio` domain yet, follow these steps:
-
-1. **GitHub Pages Settings**: Go to your repository on GitHub.com -> **Settings** -> **Pages**.
-2. Under "Custom domain", type in `cogroup.studio` and click **Save**.
-3. **DNS Settings**: Log into your domain provider (where you bought `cogroup.studio`) and find the DNS or Nameserver settings. Add these four **A Records** (Host: `@`):
-   - `185.199.108.153`
-   - `185.199.109.153`
-   - `185.199.110.153`
-   - `185.199.111.153`
-4. Add a **CNAME Record** (Host: `www`, Target: `your-github-username.github.io.`).
-5. Wait 15-30 minutes for the internet to update, then go back to GitHub Pages settings and check **"Enforce HTTPS"**.
-
----
-
-## 📁 Project Structure
-
-- `index.html` — The main landing page
-- `gallery.html` — The masonry photo gallery
-- `meetme.html` — About/Contact page
-- `projects.html` — The index of all your project albums
-- `project-*.html` — Individual project pages (e.g., `project-automotive.html`)
-- `styles.css` — All global styling, colors, and layouts
-- `script.js` — The logic for the interactive Lightbox gallery and smooth page transitions
-- `images/` — All your highly optimized, compressed images sorted by category
-
----
-
-## 🎨 Quick Styling Guide
-
-To tweak the global colors of the site, open `styles.css` and look at the very top:
-```css
-:root {
-    --bg-primary: #121212;      /* The dark background color */
-    --text-primary: #ffffff;    /* The main white text */
-    --text-secondary: #a0a0a0;  /* The grey subtitle text */
-    --accent: #222222;          /* Used for footer background */
-}
-```
-Any changes made here will instantly apply to the entire website.
+`cogroup.studio` is already connected and does not need setting up again. It's wired via the
+`CNAME` file plus four A records (`185.199.108–111.153`) and a `www` CNAME at the registrar,
+with Enforce HTTPS on in the repo's Pages settings.
