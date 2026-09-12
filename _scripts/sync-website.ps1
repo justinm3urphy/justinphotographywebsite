@@ -65,6 +65,39 @@ function Get-LoadAttrs($n) {
     return " loading=`"lazy`""
 }
 
+# Cover photos for a project's tile on the home page and projects.html.
+# If images\projects\<name>\cover\ exists and has photos, only those are used -
+# that is how to choose which photos are good enough to be a cover. Otherwise
+# every photo in 4x5 is eligible.
+function Get-CoverPaths($p) {
+    $paths = @()
+    foreach ($sub in @("cover", "4x5")) {
+        if (Test-Path "images\projects\$p\$sub") {
+            $files = Get-ChildItem -Path "images\projects\$p\$sub" -File | Where-Object { $_.Extension -match "\.(jpg|jpeg|png|webp)$" }
+            if ($files.Count -gt 0) {
+                $paths = @($files | ForEach-Object { "images/projects/$p/$sub/" + $_.Name })
+                break
+            }
+        }
+    }
+    return $paths
+}
+
+# Tile <img> with a build-time pick as src plus the full list in data-covers.
+# The inline script emitted by Get-CoverRotator swaps src on every page load.
+# Grid images are loading="lazy", which the preload scanner skips, so the swap
+# happens before any fetch - one download per tile, not two.
+function Get-CoverImgTag($covers, $alt) {
+    $src = "images/main_page/background/MSP06558-Edit.jpg"
+    $attr = ""
+    if ($covers.Count -gt 0) { $src = $covers | Get-Random }
+    if ($covers.Count -gt 1) { $attr = " data-covers=`"" + ($covers -join "|") + "`"" }
+    return "<img src=`"$src`"$attr alt=`"$alt`" loading=`"lazy`">"
+}
+function Get-CoverRotator() {
+    return '<script>document.querySelectorAll("[data-covers]").forEach(function(i){var l=i.dataset.covers.split("|");i.src=l[Math.floor(Math.random()*l.length)]})</script>'
+}
+
 function Write-Page($Path,$Text) {
     # Trim every trailing newline, then add back exactly one.
     # Set-Content used to append a newline on top of the one already there,
@@ -183,21 +216,11 @@ foreach ($p in $projects) {
         $link = "project-${p}.html"
     }
     
-    $imgs4x5 = @()
-    if (Test-Path "images\projects\$p\4x5") {
-        $imgs4x5 = Get-ChildItem -Path "images\projects\$p\4x5" -File | Where-Object { $_.Extension -match "\.(jpg|jpeg|png|webp)$" }
-    }
-    
-    # Random cover chosen here, at build time. It used to be swapped again by a
-    # script after the page loaded, which downloaded two full-size photos per tile.
-    $fallbackImg = "images/main_page/background/MSP06558-Edit.jpg"
-    if ($imgs4x5.Count -gt 0) {
-        $fallbackImg = "images/projects/$p/4x5/" + ($imgs4x5 | Get-Random).Name
-    }
-    
+    $coverImg = Get-CoverImgTag (Get-CoverPaths $p) $title
+
     $projectsHtmlStr += @"
             <a href="$link" class="work-item medium reveal" id="thumb-$p">
-                <img src="$fallbackImg" alt="$title" loading="lazy">
+                $coverImg
                 <div class="work-caption">
                     <h3>$title</h3>
                     <span>view &rarr;</span>
@@ -270,6 +293,7 @@ $projectsContent = @"
     <section class="container" style="padding-top: 0; padding-bottom: 10vh;">
         <div class="works-grid">
 $projectsHtmlStr
+            $(Get-CoverRotator)
         </div>
     </section>
 
@@ -406,24 +430,13 @@ if (Test-Path "index.html") {
             $link = "project-${p}.html"
         }
         
-        $imgs4x5 = @()
-        if (Test-Path "images\projects\$p\4x5") {
-            $imgs4x5 = Get-ChildItem -Path "images\projects\$p\4x5" -File | Where-Object { $_.Extension -match "\.(jpg|jpeg|png|webp)$" }
-        }
-        
-        $fallbackImg = "images/main_page/background/MSP06558-Edit.jpg"
-        if ($imgs4x5.Count -gt 0) {
-            # Pick random 4x5 image for the selected works grid
-            $randomImg = $imgs4x5 | Get-Random
-            $fallbackImg = "images/projects/$p/4x5/" + $randomImg.Name
-        }
-        
+        $coverImg = Get-CoverImgTag (Get-CoverPaths $p) $title
         $style = "bento-item"
         $delay = $delays[$i]
-        
+
         $worksHtml += @"
             <a href="$link" class="$style reveal"$delay>
-                <img src="$fallbackImg" alt="$title" loading="lazy">
+                $coverImg
                 <div class="work-caption">
                     <h3>$title</h3>
                     <span>View Project &rarr;</span>
@@ -437,7 +450,7 @@ if (Test-Path "index.html") {
     if ($indexContent -notmatch "<div class=`"works-grid`">") {
         $pattern = "(?s)<div class=`"bento-grid`">.*?</div>\s*</section>"
     }
-    $replacement = "<div class=`"bento-grid`">`r`n$worksHtml`r`n        </div>`r`n    </section>"
+    $replacement = "<div class=`"bento-grid`">`r`n$worksHtml`r`n            $(Get-CoverRotator)`r`n        </div>`r`n    </section>"
     
     $indexContent = $indexContent -replace $pattern, $replacement
     Write-Page "index.html" $indexContent
