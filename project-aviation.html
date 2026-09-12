@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aviation — Justin Tang</title>
     <meta name="description" content="Aircraft on the ground and in the air. Aviation photography by Justin Tang, Singapore.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="styles.css">
     <meta property="og:title" content="Aviation — Justin Tang">
     <meta property="og:description" content="Aircraft on the ground and in the air. Aviation photography by Justin Tang, Singapore.">
@@ -26,7 +29,7 @@
     
 
     <!-- Project Hero -->
-    <section class="project-hero">
+    <section class="project-hero" style="background-image: url('images/projects/aviation/banner/MSP06558-Edit.jpg')">
         <h1 class="huge-text reveal"><!--T:project.aviation.title-->aviation<!--/T--></h1>
     </section>
 
@@ -43,10 +46,10 @@
         
 
         <div class="gallery-masonry">
-            <div class="gallery-photo reveal"><img src="images/projects/aviation/4x5/thumbs/a10.jpg" data-full="images/projects/aviation/4x5/a10.jpg" alt="aviation detail" loading="lazy" decoding="async" width="480" height="600"></div>
-            <div class="gallery-photo reveal"><img src="images/projects/aviation/4x5/thumbs/c17.jpg" data-full="images/projects/aviation/4x5/c17.jpg" alt="aviation detail" loading="lazy" decoding="async" width="600" height="600"></div>
-            <div class="gallery-photo reveal"><img src="images/projects/aviation/4x5/thumbs/DSC03089-Enhanced-NR-Edit-SR.jpg" data-full="images/projects/aviation/4x5/DSC03089-Enhanced-NR-Edit-SR.jpg" alt="aviation detail" loading="lazy" decoding="async" width="600" height="600"></div>
-            <div class="gallery-photo reveal"><img src="images/projects/aviation/4x5/thumbs/DSC03209-Enhanced-NR-Edit-SR.jpg" data-full="images/projects/aviation/4x5/DSC03209-Enhanced-NR-Edit-SR.jpg" alt="aviation detail" loading="lazy" decoding="async" width="600" height="600"></div>
+            <div class="gallery-photo reveal"><img src="images/projects/aviation/4x5/thumbs/a10.jpg" data-full="images/projects/aviation/4x5/a10.jpg" alt="aviation detail" fetchpriority="high" decoding="async" width="480" height="600"></div>
+            <div class="gallery-photo reveal"><img src="images/projects/aviation/4x5/thumbs/c17.jpg" data-full="images/projects/aviation/4x5/c17.jpg" alt="aviation detail" decoding="async" width="600" height="600"></div>
+            <div class="gallery-photo reveal"><img src="images/projects/aviation/4x5/thumbs/DSC03089-Enhanced-NR-Edit-SR.jpg" data-full="images/projects/aviation/4x5/DSC03089-Enhanced-NR-Edit-SR.jpg" alt="aviation detail" decoding="async" width="600" height="600"></div>
+            <div class="gallery-photo reveal"><img src="images/projects/aviation/4x5/thumbs/DSC03209-Enhanced-NR-Edit-SR.jpg" data-full="images/projects/aviation/4x5/DSC03209-Enhanced-NR-Edit-SR.jpg" alt="aviation detail" decoding="async" width="600" height="600"></div>
             <div class="gallery-photo reveal"><img src="images/projects/aviation/4x5/thumbs/DSC03521-Enhanced-NR-Edit-SR.jpg" data-full="images/projects/aviation/4x5/DSC03521-Enhanced-NR-Edit-SR.jpg" alt="aviation detail" loading="lazy" decoding="async" width="600" height="600"></div>
             <div class="gallery-photo reveal"><img src="images/projects/aviation/4x5/thumbs/DSC04140-Enhanced-NR-Edit-SR.jpg" data-full="images/projects/aviation/4x5/DSC04140-Enhanced-NR-Edit-SR.jpg" alt="aviation detail" loading="lazy" decoding="async" width="600" height="600"></div>
             <div class="gallery-photo reveal"><img src="images/projects/aviation/4x5/thumbs/DSC05217-Enhanced-NR-Edit-SR.jpg" data-full="images/projects/aviation/4x5/DSC05217-Enhanced-NR-Edit-SR.jpg" alt="aviation detail" loading="lazy" decoding="async" width="600" height="600"></div>
@@ -129,18 +132,6 @@
     </footer>
 
     <script src="script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const banners = ['images/projects/aviation/banner/MSP06558-Edit.jpg'];
-            if (banners.length > 0) {
-                const randomIndex = Math.floor(Math.random() * banners.length);
-                const hero = document.querySelector('.project-hero');
-                if (hero) {
-                    hero.style.backgroundImage = "url('" + banners[randomIndex] + "')";
-                }
-            }
-        });
-    </script>
 
     <!-- Mobile Navigation -->
     <nav class="mobile-nav">
@@ -161,20 +152,5 @@
             meet me
         </a>
     </nav>
-
-<!-- BANNER SCRIPT -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const banners = ['images/projects/aviation/banner/MSP06558-Edit.jpg'];
-            if (banners.length > 0) {
-                const randomIndex = Math.floor(Math.random() * banners.length);
-                const hero = document.querySelector('.project-hero');
-                if (hero) {
-                    hero.style.backgroundImage = "url('" + banners[randomIndex] + "')";
-                }
-            }
-        });
-    </script>
-<!-- /BANNER SCRIPT -->
 </body>
 </html>

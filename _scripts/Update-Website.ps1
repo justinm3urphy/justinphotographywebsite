@@ -128,8 +128,10 @@ $missing = @()
 foreach ($f in (Get-ChildItem -Filter "*.html")) {
     $c = Get-Content $f.Name -Raw
     $live = [regex]::Replace($c, '(?s)<!--.*?-->', '')
-    foreach ($m in [regex]::Matches($live, '(?:src|href|data-full)\s*=\s*"([^"]+)"')) {
+    # Also covers the project banners, which are inline style="background-image: url('...')".
+    foreach ($m in [regex]::Matches($live, '(?:src|href|data-full)\s*=\s*"([^"]+)"|url\(''([^''")]+)''\)')) {
         $u = $m.Groups[1].Value.Trim()
+        if ($u -eq "") { $u = $m.Groups[2].Value.Trim() }
         if ($u -eq "") { continue }
         if ($u -match '^(#|mailto:|tel:|javascript:|data:)') { continue }
         if ($u -match '^(https?:)?//') { continue }

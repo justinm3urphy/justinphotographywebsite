@@ -56,6 +56,15 @@ function Get-DimAttrs($relPath) {
     return ""
 }
 
+# The first grid photo on a page is its Largest Contentful Paint. Marking it
+# lazy tells the browser to fetch it *last*, which is what Core Web Vitals
+# measures. First photo: high priority. Next three: normal. The rest: lazy.
+function Get-LoadAttrs($n) {
+    if ($n -eq 0) { return " fetchpriority=`"high`"" }
+    if ($n -lt 4) { return "" }
+    return " loading=`"lazy`""
+}
+
 function Write-Page($Path,$Text) {
     # Trim every trailing newline, then add back exactly one.
     # Set-Content used to append a newline on top of the one already there,
@@ -106,62 +115,21 @@ foreach ($p in $projects) {
             $bannerImgs = Get-ChildItem -Path "images\projects\$p\banner" -File | Where-Object { $_.Extension -match "\.(jpg|jpeg|png|webp)$" }
         }
         
-        $bannerCSS = @"
-        .project-hero {
-            height: 70vh;
-            background: var(--text-primary);
-            background-size: cover;
-            background-position: center 75%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            transition: background-image 0.5s ease;
-        }
-        .project-hero::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.4);
-        }
-        .project-hero h1 {
-            position: relative;
-            z-index: 10;
-            color: white;
-        }
-"@
-
-        $jsArrayStr = ""
-        foreach ($img in $bannerImgs) {
-            $jsArrayStr += "'images/projects/$p/banner/" + $img.Name + "', "
-        }
-        if ($jsArrayStr.Length -gt 0) { $jsArrayStr = $jsArrayStr.Substring(0, $jsArrayStr.Length - 2) }
-
-        $bannerJS = ""
+        # Pick the banner at build time and write it onto the hero tag as an inline
+        # style, so the browser discovers it while parsing instead of after
+        # DOMContentLoaded. (No project page has a <style> block, so the old
+        # "inject CSS" step here never did anything.)
+        $heroTag = '<section class="project-hero">'
         if ($bannerImgs.Count -gt 0) {
-            $bannerJS = @"
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const banners = [$jsArrayStr];
-            if (banners.length > 0) {
-                const randomIndex = Math.floor(Math.random() * banners.length);
-                const hero = document.querySelector('.project-hero');
-                if (hero) {
-                    hero.style.backgroundImage = "url('" + banners[randomIndex] + "')";
-                }
-            }
-        });
-    </script>
-"@
+            $chosen = $bannerImgs | Get-Random
+            $heroTag = '<section class="project-hero" style="background-image: url(''images/projects/' + $p + '/banner/' + $chosen.Name + ''')">'
         }
 
         $content = Get-Content $file -Raw
-        
-        # Inject CSS
-        if ($content -match "(?s)<style>.*?</style>") {
-            $content = $content -replace "(?s)<style>.*?</style>", "<style>$bannerCSS</style>"
-        }
-        
+
+        # Banner: replace the hero tag whatever style it currently carries.
+        $content = $content -replace '<section class="project-hero"[^>]*>', $heroTag
+
         # Inject JS
         # ---------------------------------------------------------------
         # REWRITTEN. The original tried to match the entire mobile-nav block
@@ -170,14 +138,15 @@ foreach ($p in $projects) {
         # It also hard-coded a mobile-nav layout that no longer matches the
         # HTML. Anchoring on </body> is simpler and cannot drift.
         # ---------------------------------------------------------------
+        # The banner used to be set by a script here. It's on the hero tag now;
+        # this strips the old block from pages that still carry it.
         $content = $content -replace "(?s)\s*<!-- BANNER SCRIPT -->.*?<!-- /BANNER SCRIPT -->", ""
-        if ($bannerJS -ne "") {
-            $block = "`r`n<!-- BANNER SCRIPT -->`r`n" + $bannerJS + "`r`n<!-- /BANNER SCRIPT -->`r`n"
-            $content = $content.Replace("</body>", $block + "</body>")
-        }
-        
+        # Older pages also carry an unmarked copy of the same script. Strip that too.
+        $content = $content -replace "(?s)\s*<script>\s*document\.addEventListener\('DOMContentLoaded', \(\) => \{\s*const banners = \[.*?</script>", ""
+
         # --- Masonry Gallery ---
         $htmlStr = ""
+        $n = 0
         $formats = @("4x5", "5x4", "16x9")
         foreach ($fmt in $formats) {
             if (Test-Path "images\projects\$p\$fmt") {
@@ -185,7 +154,8 @@ foreach ($p in $projects) {
                 foreach ($img in $imgs) {
                     $full  = "images/projects/$p/$fmt/" + $img.Name
                     $thumb = if (Test-Path "images\projects\$p\$fmt\thumbs\$($img.Name)") { "images/projects/$p/$fmt/thumbs/" + $img.Name } else { $full }
-                    $htmlStr += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"$p detail`" loading=`"lazy`" decoding=`"async`"$(Get-DimAttrs $thumb)></div>`r`n"
+                    $htmlStr += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"$p detail`"$(Get-LoadAttrs $n) decoding=`"async`"$(Get-DimAttrs $thumb)></div>`r`n"
+                    $n++
                 }
             }
         }
@@ -203,7 +173,6 @@ foreach ($p in $projects) {
 
 # 2. Update projects.html Thumbnails
 $projectsHtmlStr = ""
-$projectsJsObject = ""
 
 foreach ($p in $projects) {
     if ($p -eq "f1") {
@@ -219,17 +188,12 @@ foreach ($p in $projects) {
         $imgs4x5 = Get-ChildItem -Path "images\projects\$p\4x5" -File | Where-Object { $_.Extension -match "\.(jpg|jpeg|png|webp)$" }
     }
     
+    # Random cover chosen here, at build time. It used to be swapped again by a
+    # script after the page loaded, which downloaded two full-size photos per tile.
     $fallbackImg = "images/main_page/background/MSP06558-Edit.jpg"
-    $jsArr = ""
     if ($imgs4x5.Count -gt 0) {
-        $fallbackImg = "images/projects/$p/4x5/" + $imgs4x5[0].Name
-        foreach ($img in $imgs4x5) {
-            $jsArr += "'images/projects/$p/4x5/" + $img.Name + "', "
-        }
-        $jsArr = $jsArr.Substring(0, $jsArr.Length - 2)
+        $fallbackImg = "images/projects/$p/4x5/" + ($imgs4x5 | Get-Random).Name
     }
-    
-    $projectsJsObject += "            '$p': [$jsArr],`r`n"
     
     $projectsHtmlStr += @"
             <a href="$link" class="work-item medium reveal" id="thumb-$p">
@@ -251,6 +215,9 @@ $projectsContent = @"
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Longer bodies of work, grouped by what they were for. Automotive, aviation, concerts, food and commissions.">
     <title>Projects — Justin Tang</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="styles.css">
     <meta property="og:title" content="Projects — Justin Tang">
     <meta property="og:description" content="Longer bodies of work, grouped by what they were for. Automotive, aviation, concerts, food and commissions.">
@@ -326,27 +293,6 @@ $projectsHtmlStr
     </footer>
 
     <script src="script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const projectImages = {
-$projectsJsObject
-            };
-            
-            // Rotate images on load
-            for (const [projectId, images] of Object.entries(projectImages)) {
-                if (images.length > 0) {
-                    const thumb = document.getElementById('thumb-' + projectId);
-                    if (thumb) {
-                        const imgEl = thumb.querySelector('img');
-                        if (imgEl) {
-                            const randomIndex = Math.floor(Math.random() * images.length);
-                            imgEl.src = images[randomIndex];
-                        }
-                    }
-                }
-            }
-        });
-    </script>
 
     <!-- Mobile Navigation -->
     <nav class="mobile-nav">
@@ -374,6 +320,7 @@ Write-Page "projects.html" $projectsContent
 
 # 3. Update Master Gallery Page
 $htmlStrGallery = ""
+$n = 0
 foreach ($p in $projects) {
     $formats = @("4x5", "5x4", "16x9")
     foreach ($fmt in $formats) {
@@ -382,7 +329,8 @@ foreach ($p in $projects) {
             foreach ($img in $imgs) {
                 $full  = "images/projects/$p/$fmt/" + $img.Name
                 $thumb = if (Test-Path "images\projects\$p\$fmt\thumbs\$($img.Name)") { "images/projects/$p/$fmt/thumbs/" + $img.Name } else { $full }
-                $htmlStrGallery += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"$p`" loading=`"lazy`" decoding=`"async`"$(Get-DimAttrs $thumb)></div>`r`n"
+                $htmlStrGallery += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"$p`"$(Get-LoadAttrs $n) decoding=`"async`"$(Get-DimAttrs $thumb)></div>`r`n"
+                $n++
             }
         }
     }
@@ -394,7 +342,8 @@ foreach ($fmt in $formats) {
         foreach ($img in $imgs) {
             $full  = "images/gallery/$fmt/" + $img.Name
             $thumb = if (Test-Path "images\gallery\$fmt\thumbs\$($img.Name)") { "images/gallery/$fmt/thumbs/" + $img.Name } else { $full }
-            $htmlStrGallery += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"gallery`" loading=`"lazy`" decoding=`"async`"$(Get-DimAttrs $thumb)></div>`r`n"
+            $htmlStrGallery += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"gallery`"$(Get-LoadAttrs $n) decoding=`"async`"$(Get-DimAttrs $thumb)></div>`r`n"
+            $n++
         }
     }
 }
@@ -426,7 +375,7 @@ if (Test-Path "index.html") {
         # Match ANY current src/alt - the old pattern hard-coded "images/hero/" and
         # alt="Justin Photography", neither of which the file actually contains, so
         # the hero never rotated. Anchored on id="hero-img", which is unique.
-        $heroPattern = '<img src="[^"]*" alt="[^"]*" class="hero-image" id="hero-img">'
+        $heroPattern = '<img src="[^"]*" alt="[^"]*" class="hero-image" id="hero-img"[^>]*>'
         if ($indexContent -match $heroPattern) {
             $indexContent = $indexContent -replace $heroPattern, "<img src=`"$heroPath`" alt=`"Justin Tang Photography`" class=`"hero-image`" id=`"hero-img`" fetchpriority=`"high`" decoding=`"async`">"
             Write-Host "Hero image set to: $($randomHero.Name)"

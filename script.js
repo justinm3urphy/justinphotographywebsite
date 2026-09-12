@@ -1,173 +1,177 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
-    // Reveal Animations using Intersection Observer
-    const revealElements = document.querySelectorAll('.reveal');
-    
-    const revealOptions = {
-        threshold: 0.1,
-        rootMargin: "0px 0px -50px 0px"
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    // Each initialiser is guarded so one failure can't take the others down.
+    const run = (name, fn) => {
+        try { fn(); } catch (err) { console.error('[' + name + ']', err); }
     };
-    
-    const revealOnScroll = new IntersectionObserver(function(entries, observer) {
-        entries.forEach(entry => {
-            if (!entry.isIntersecting) {
-                return;
-            } else {
+
+    // Lets iOS Safari apply :active (press feedback) to non-form elements.
+    document.addEventListener('touchstart', () => {}, { passive: true });
+
+    // --- Reveal on scroll ----------------------------------------------------
+    run('reveal', () => {
+        const els = document.querySelectorAll('.reveal');
+        if (!('IntersectionObserver' in window)) {
+            els.forEach(el => el.classList.add('active'));
+            return;
+        }
+        const io = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
                 entry.target.classList.add('active');
                 observer.unobserve(entry.target);
-            }
-        });
-    }, revealOptions);
-    
-    revealElements.forEach(el => {
-        revealOnScroll.observe(el);
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        els.forEach(el => io.observe(el));
     });
 
-    // Optional: Dynamic Hero Background image rotation
-    // Automatically rotates through your images in the hero folder
-    const heroImg = document.getElementById('hero-img');
-    if (heroImg) {
-        // List of all background images
-        const heroImages = [
-            'images/main_page/background/DSC01365-Edit-Enhanced-SR.jpg',
-            'images/main_page/background/DSC01843-Enhanced-NR-Edit.jpg',
-            'images/main_page/background/DSC07055.jpg',
-            'images/main_page/background/MSP00763-Enhanced-NR.jpg',
-            'images/main_page/background/MSP06558-Edit.jpg',
-            'images/main_page/background/MSP07330.jpg',
-            'images/main_page/background/MSP07812-Enhanced-NR-3.jpg',
-            'images/main_page/background/MSP08197.jpg',
-            'images/main_page/background/MSP08212.jpg'
-        ];
-        
-        // Select a random image every time the page refreshes
-        const randomIndex = Math.floor(Math.random() * heroImages.length);
-        heroImg.src = heroImages[randomIndex];
-        
-        // Smooth transition styling
-        heroImg.style.transition = 'opacity 0.5s ease';
-    }
-
-    // Parallax effect on scroll for hero image
-    const heroWrapper = document.querySelector('.hero-image-wrapper');
-    if (heroWrapper) {
+    // --- Scroll: navbar state + hero parallax --------------------------------
+    // One passive listener, one write per frame. The navbar's scrolled look is
+    // a class (styled in styles.css), not six inline styles per scroll event.
+    run('scroll', () => {
+        const heroWrapper = document.querySelector('.hero-image-wrapper');
+        let ticking = false;
+        const update = () => {
+            ticking = false;
+            const y = window.scrollY;
+            document.body.classList.toggle('scrolled', y > 50);
+            if (heroWrapper && !reduceMotion.matches) {
+                heroWrapper.style.transform = 'translateY(' + (y * 0.15) + 'px)';
+            }
+        };
         window.addEventListener('scroll', () => {
-            const scrolled = window.scrollY;
-            heroWrapper.style.transform = `translateY(${scrolled * 0.15}px)`;
-        });
-    }
-
-    // Change Navbar color blending on scroll if needed
-    const navbar = document.querySelector('.navbar');
-    window.addEventListener('scroll', () => {
-        if (!navbar) return;
-        if (window.scrollY > 50) {
-            navbar.style.background = 'rgba(18, 18, 18, 0.9)';
-            navbar.style.backdropFilter = 'blur(10px)';
-            navbar.style.mixBlendMode = 'normal';
-            navbar.style.paddingTop = '1.25rem';
-            navbar.style.paddingBottom = '1.25rem';
-            navbar.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
-        } else {
-            navbar.style.background = 'transparent';
-            navbar.style.backdropFilter = 'none';
-            navbar.style.mixBlendMode = 'normal';
-            navbar.style.paddingTop = '2rem';
-            navbar.style.paddingBottom = '2rem';
-            navbar.style.boxShadow = 'none';
-        }
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(update);
+        }, { passive: true });
+        update();
     });
 
-    // --- PAGE TRANSITIONS ---
-    document.body.classList.add('loaded');
-    
-    const links = document.querySelectorAll('a[href]');
-    links.forEach(link => {
-        link.addEventListener('click', (e) => {
-            const target = link.getAttribute('href');
-            // Intercept internal links only
-            if (target && !target.startsWith('http') && !target.startsWith('mailto') && link.getAttribute('target') !== '_blank') {
+    // --- Lightbox --------------------------------------------------------------
+    run('lightbox', () => {
+        const photos = Array.from(document.querySelectorAll('.gallery-photo img, .slice-details img, .slice-main img'));
+        if (photos.length === 0) return;
+
+        const lightbox = document.createElement('div');
+        lightbox.className = 'lightbox';
+        lightbox.setAttribute('role', 'dialog');
+        lightbox.setAttribute('aria-modal', 'true');
+        lightbox.setAttribute('aria-label', 'Photo viewer');
+        lightbox.setAttribute('aria-hidden', 'true');
+
+        const img = document.createElement('img');
+        img.alt = '';
+
+        const button = (className, html, label) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = className;
+            b.innerHTML = html;
+            b.setAttribute('aria-label', label);
+            return b;
+        };
+        const prev = button('lightbox-nav lightbox-prev', '&#10094;', 'Previous photo');
+        const next = button('lightbox-nav lightbox-next', '&#10095;', 'Next photo');
+        const close = button('lightbox-close', '&times;', 'Close');
+        lightbox.append(img, prev, next, close);
+        document.body.appendChild(lightbox);
+
+        const fullSrc = p => p.dataset.full || p.src;
+        let order = [];     // photos in visual order, set when the lightbox opens
+        let index = 0;
+        let opener = null;  // the tile that opened the lightbox, for focus return
+
+        // The grid is CSS columns, which lay the DOM out top-to-bottom per
+        // column, so DOM order is not reading order. Sort by position so "next"
+        // means the photo beside this one, not the one underneath it.
+        const visualOrder = () => {
+            const rects = photos.map(p => {
+                const r = p.getBoundingClientRect();
+                return { p, top: r.top, left: r.left, height: r.height };
+            });
+            const tolerance = (Math.min(...rects.map(r => r.height)) / 2) || 40;
+            rects.sort((a, b) => Math.abs(a.top - b.top) < tolerance ? a.left - b.left : a.top - b.top);
+            return rects.map(r => r.p);
+        };
+
+        const preload = i => {
+            const p = order[(i + order.length) % order.length];
+            if (p) new Image().src = fullSrc(p);
+        };
+
+        const show = i => {
+            index = (i + order.length) % order.length;
+            img.classList.add('is-loading');
+            img.src = fullSrc(order[index]);
+            preload(index + 1);
+            preload(index - 1);
+        };
+        img.addEventListener('load', () => img.classList.remove('is-loading'));
+        img.addEventListener('error', () => img.classList.remove('is-loading'));
+
+        // Everything behind the dialog is inert while it's open.
+        const setInert = on => {
+            Array.from(document.body.children).forEach(el => {
+                if (el !== lightbox) el.inert = on;
+            });
+        };
+
+        const open = p => {
+            order = visualOrder();
+            opener = p;
+            show(Math.max(0, order.indexOf(p)));
+            lightbox.classList.add('active');
+            lightbox.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            setInert(true);
+            close.focus({ preventScroll: true });
+        };
+
+        const shut = () => {
+            lightbox.classList.remove('active');
+            lightbox.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            setInert(false);
+            const target = opener && (opener.closest('.gallery-photo') || opener);
+            if (target && typeof target.focus === 'function') target.focus({ preventScroll: true });
+        };
+
+        // Tiles are keyboard-operable buttons, not just click targets.
+        photos.forEach(p => {
+            const tile = p.closest('.gallery-photo') || p;
+            tile.setAttribute('tabindex', '0');
+            tile.setAttribute('role', 'button');
+            tile.setAttribute('aria-label', p.alt ? 'View ' + p.alt : 'View photo');
+            tile.addEventListener('click', () => open(p));
+            tile.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    open(p);
+                }
+            });
+        });
+
+        prev.addEventListener('click', () => show(index - 1));
+        next.addEventListener('click', () => show(index + 1));
+        close.addEventListener('click', shut);
+        lightbox.addEventListener('click', e => { if (e.target === lightbox) shut(); });
+
+        document.addEventListener('keydown', e => {
+            if (!lightbox.classList.contains('active')) return;
+            if (e.key === 'Escape') { shut(); return; }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); show(index - 1); return; }
+            if (e.key === 'ArrowRight') { e.preventDefault(); show(index + 1); return; }
+            if (e.key === 'Tab') {
+                // Keep focus inside the dialog.
+                const focusable = [prev, next, close];
+                const i = focusable.indexOf(document.activeElement);
                 e.preventDefault();
-                document.body.classList.remove('loaded');
-                setTimeout(() => {
-                    window.location.href = target;
-                }, 400); // Wait for fade out
+                const n = e.shiftKey
+                    ? (i <= 0 ? focusable.length - 1 : i - 1)
+                    : (i === -1 || i === focusable.length - 1 ? 0 : i + 1);
+                focusable[n].focus();
             }
         });
-    });
-
-    // --- ADVANCED LIGHTBOX FEATURE ---
-    const lightbox = document.createElement('div');
-    lightbox.className = 'lightbox';
-    
-    const lightboxImg = document.createElement('img');
-    const lightboxClose = document.createElement('span');
-    lightboxClose.className = 'lightbox-close';
-    lightboxClose.innerHTML = '&times;';
-    
-    const lightboxPrev = document.createElement('span');
-    lightboxPrev.className = 'lightbox-nav lightbox-prev';
-    lightboxPrev.innerHTML = '&#10094;';
-    
-    const lightboxNext = document.createElement('span');
-    lightboxNext.className = 'lightbox-nav lightbox-next';
-    lightboxNext.innerHTML = '&#10095;';
-    
-    lightbox.appendChild(lightboxImg);
-    lightbox.appendChild(lightboxPrev);
-    lightbox.appendChild(lightboxNext);
-    lightbox.appendChild(lightboxClose);
-    document.body.appendChild(lightbox);
-
-    const galleryPhotos = document.querySelectorAll('.gallery-photo img, .slice-details img, .slice-main img');
-    let currentImages = [];
-    let currentIndex = 0;
-
-    galleryPhotos.forEach((photo, index) => {
-        // Grids show a small thumbnail (src). The lightbox opens the full-size
-        // original from data-full. Falls back to src if no thumbnail exists.
-        currentImages.push(photo.dataset.full || photo.src);
-        photo.addEventListener('click', (e) => {
-            currentIndex = index;
-            showImage(currentIndex);
-            lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        });
-    });
-
-    function showImage(index) {
-        if (currentImages.length === 0) return;
-        if (index < 0) index = currentImages.length - 1;
-        if (index >= currentImages.length) index = 0;
-        currentIndex = index;
-        lightboxImg.src = currentImages[currentIndex];
-    }
-
-    lightboxPrev.addEventListener('click', (e) => {
-        e.stopPropagation();
-        showImage(currentIndex - 1);
-    });
-
-    lightboxNext.addEventListener('click', (e) => {
-        e.stopPropagation();
-        showImage(currentIndex + 1);
-    });
-
-    lightbox.addEventListener('click', (e) => {
-        if (e.target !== lightboxImg && e.target !== lightboxPrev && e.target !== lightboxNext) {
-            lightbox.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (!lightbox.classList.contains('active')) return;
-        if (e.key === 'Escape') {
-            lightbox.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        } else if (e.key === 'ArrowLeft') {
-            showImage(currentIndex - 1);
-        } else if (e.key === 'ArrowRight') {
-            showImage(currentIndex + 1);
-        }
     });
 });

@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Automotive — Justin Tang</title>
     <meta name="description" content="Cars, usually after dark. Automotive photography by Justin Tang, Singapore.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="styles.css">
     <meta property="og:title" content="Automotive — Justin Tang">
     <meta property="og:description" content="Cars, usually after dark. Automotive photography by Justin Tang, Singapore.">
@@ -26,7 +29,7 @@
     
 
     <!-- Project Hero -->
-    <section class="project-hero">
+    <section class="project-hero" style="background-image: url('images/projects/automotive/banner/MSP09455-Enhanced-NR.jpg')">
         <h1 class="huge-text reveal"><!--T:project.automotive.title-->automotive<!--/T--></h1>
     </section>
 
@@ -41,10 +44,10 @@
     <!-- Project Gallery -->
     <section class="container" style="padding-top: 0;">
         <div class="gallery-masonry">
-            <div class="gallery-photo reveal"><img src="images/projects/automotive/4x5/thumbs/MSP00712.jpg" data-full="images/projects/automotive/4x5/MSP00712.jpg" alt="automotive detail" loading="lazy" decoding="async" width="480" height="600"></div>
-            <div class="gallery-photo reveal"><img src="images/projects/automotive/4x5/thumbs/MSP01329.jpg" data-full="images/projects/automotive/4x5/MSP01329.jpg" alt="automotive detail" loading="lazy" decoding="async" width="480" height="600"></div>
-            <div class="gallery-photo reveal"><img src="images/projects/automotive/4x5/thumbs/MSP01333.jpg" data-full="images/projects/automotive/4x5/MSP01333.jpg" alt="automotive detail" loading="lazy" decoding="async" width="480" height="600"></div>
-            <div class="gallery-photo reveal"><img src="images/projects/automotive/4x5/thumbs/MSP01339.jpg" data-full="images/projects/automotive/4x5/MSP01339.jpg" alt="automotive detail" loading="lazy" decoding="async" width="400" height="600"></div>
+            <div class="gallery-photo reveal"><img src="images/projects/automotive/4x5/thumbs/MSP00712.jpg" data-full="images/projects/automotive/4x5/MSP00712.jpg" alt="automotive detail" fetchpriority="high" decoding="async" width="480" height="600"></div>
+            <div class="gallery-photo reveal"><img src="images/projects/automotive/4x5/thumbs/MSP01329.jpg" data-full="images/projects/automotive/4x5/MSP01329.jpg" alt="automotive detail" decoding="async" width="480" height="600"></div>
+            <div class="gallery-photo reveal"><img src="images/projects/automotive/4x5/thumbs/MSP01333.jpg" data-full="images/projects/automotive/4x5/MSP01333.jpg" alt="automotive detail" decoding="async" width="480" height="600"></div>
+            <div class="gallery-photo reveal"><img src="images/projects/automotive/4x5/thumbs/MSP01339.jpg" data-full="images/projects/automotive/4x5/MSP01339.jpg" alt="automotive detail" decoding="async" width="400" height="600"></div>
             <div class="gallery-photo reveal"><img src="images/projects/automotive/4x5/thumbs/MSP01370-Enhanced-NR.jpg" data-full="images/projects/automotive/4x5/MSP01370-Enhanced-NR.jpg" alt="automotive detail" loading="lazy" decoding="async" width="480" height="600"></div>
             <div class="gallery-photo reveal"><img src="images/projects/automotive/4x5/thumbs/MSP01524.jpg" data-full="images/projects/automotive/4x5/MSP01524.jpg" alt="automotive detail" loading="lazy" decoding="async" width="400" height="600"></div>
             <div class="gallery-photo reveal"><img src="images/projects/automotive/4x5/thumbs/MSP01560.jpg" data-full="images/projects/automotive/4x5/MSP01560.jpg" alt="automotive detail" loading="lazy" decoding="async" width="400" height="600"></div>
@@ -106,18 +109,6 @@
     </footer>
 
     <script src="script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const banners = ['images/projects/automotive/banner/MSP09455-Enhanced-NR.jpg'];
-            if (banners.length > 0) {
-                const randomIndex = Math.floor(Math.random() * banners.length);
-                const hero = document.querySelector('.project-hero');
-                if (hero) {
-                    hero.style.backgroundImage = "url('" + banners[randomIndex] + "')";
-                }
-            }
-        });
-    </script>
 
     <!-- Mobile Navigation -->
     <nav class="mobile-nav">
@@ -138,20 +129,5 @@
             meet me
         </a>
     </nav>
-
-<!-- BANNER SCRIPT -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const banners = ['images/projects/automotive/banner/MSP09455-Enhanced-NR.jpg'];
-            if (banners.length > 0) {
-                const randomIndex = Math.floor(Math.random() * banners.length);
-                const hero = document.querySelector('.project-hero');
-                if (hero) {
-                    hero.style.backgroundImage = "url('" + banners[randomIndex] + "')";
-                }
-            }
-        });
-    </script>
-<!-- /BANNER SCRIPT -->
 </body>
 </html>

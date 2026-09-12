@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formula 1 — Justin Tang</title>
     <meta name="description" content="Design work rather than photography: graphic design and creative direction for Formula 1 promotional material.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="styles.css">
     <meta property="og:title" content="Formula 1 — Justin Tang">
     <meta property="og:description" content="Design work rather than photography: graphic design and creative direction for Formula 1 promotional material.">
@@ -24,7 +27,7 @@
     </nav>
     
 
-    <section class="project-hero">
+    <section class="project-hero" style="background-image: url('images/projects/f1/banner/DSC00600.jpg')">
         <h1 class="huge-text reveal"><!--T:project.f1.title-->Formula 1<!--/T--></h1>
     </section>
 
@@ -39,10 +42,10 @@
 
     <section class="container" style="padding-top: 0; padding-bottom: 10vh;">
         <div class="gallery-masonry">
-            <div class="gallery-photo reveal"><img src="images/projects/f1/4x5/thumbs/DSC00901.jpg" data-full="images/projects/f1/4x5/DSC00901.jpg" alt="f1 detail" loading="lazy" decoding="async" width="480" height="600"></div>
-            <div class="gallery-photo reveal"><img src="images/projects/f1/4x5/thumbs/DSC02492.jpg" data-full="images/projects/f1/4x5/DSC02492.jpg" alt="f1 detail" loading="lazy" decoding="async" width="480" height="600"></div>
-            <div class="gallery-photo reveal"><img src="images/projects/f1/4x5/thumbs/DSC02516.jpg" data-full="images/projects/f1/4x5/DSC02516.jpg" alt="f1 detail" loading="lazy" decoding="async" width="480" height="600"></div>
-            <div class="gallery-photo reveal"><img src="images/projects/f1/4x5/thumbs/DSC02607-Enhanced-NR.jpg" data-full="images/projects/f1/4x5/DSC02607-Enhanced-NR.jpg" alt="f1 detail" loading="lazy" decoding="async" width="600" height="600"></div>
+            <div class="gallery-photo reveal"><img src="images/projects/f1/4x5/thumbs/DSC00901.jpg" data-full="images/projects/f1/4x5/DSC00901.jpg" alt="f1 detail" fetchpriority="high" decoding="async" width="480" height="600"></div>
+            <div class="gallery-photo reveal"><img src="images/projects/f1/4x5/thumbs/DSC02492.jpg" data-full="images/projects/f1/4x5/DSC02492.jpg" alt="f1 detail" decoding="async" width="480" height="600"></div>
+            <div class="gallery-photo reveal"><img src="images/projects/f1/4x5/thumbs/DSC02516.jpg" data-full="images/projects/f1/4x5/DSC02516.jpg" alt="f1 detail" decoding="async" width="480" height="600"></div>
+            <div class="gallery-photo reveal"><img src="images/projects/f1/4x5/thumbs/DSC02607-Enhanced-NR.jpg" data-full="images/projects/f1/4x5/DSC02607-Enhanced-NR.jpg" alt="f1 detail" decoding="async" width="600" height="600"></div>
             <div class="gallery-photo reveal"><img src="images/projects/f1/4x5/thumbs/DSC02651-Enhanced-NR.jpg" data-full="images/projects/f1/4x5/DSC02651-Enhanced-NR.jpg" alt="f1 detail" loading="lazy" decoding="async" width="600" height="600"></div>
             <div class="gallery-photo reveal"><img src="images/projects/f1/4x5/thumbs/DSC03085.jpg" data-full="images/projects/f1/4x5/DSC03085.jpg" alt="f1 detail" loading="lazy" decoding="async" width="480" height="600"></div>
             <div class="gallery-photo reveal"><img src="images/projects/f1/4x5/thumbs/DSC03883.jpg" data-full="images/projects/f1/4x5/DSC03883.jpg" alt="f1 detail" loading="lazy" decoding="async" width="480" height="600"></div>
@@ -95,18 +98,6 @@
     </footer>
 
     <script src="script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const banners = ['images/projects/f1/banner/DSC00600.jpg'];
-            if (banners.length > 0) {
-                const randomIndex = Math.floor(Math.random() * banners.length);
-                const hero = document.querySelector('.project-hero');
-                if (hero) {
-                    hero.style.backgroundImage = "url('" + banners[randomIndex] + "')";
-                }
-            }
-        });
-    </script>
 
     <!-- Mobile Navigation -->
     <nav class="mobile-nav">
@@ -127,20 +118,5 @@
             meet me
         </a>
     </nav>
-
-<!-- BANNER SCRIPT -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const banners = ['images/projects/f1/banner/DSC00600.jpg'];
-            if (banners.length > 0) {
-                const randomIndex = Math.floor(Math.random() * banners.length);
-                const hero = document.querySelector('.project-hero');
-                if (hero) {
-                    hero.style.backgroundImage = "url('" + banners[randomIndex] + "')";
-                }
-            }
-        });
-    </script>
-<!-- /BANNER SCRIPT -->
 </body>
 </html>
