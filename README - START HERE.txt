@@ -85,6 +85,18 @@ TO REMOVE PHOTOS
      It removes the leftover thumbnail and takes the photo off
      every page automatically.
 
+TO CHOOSE WHICH PHOTOS CAN BE A PROJECT'S COVER
+  The tiles on the home page and the projects page show a different
+  photo from that project every time someone loads the page. By
+  default any photo in 4x5 can come up. To limit it to your best:
+
+  1. Make the folder:   images\projects\<project name>\cover\
+  2. Copy 3-6 favourites into it (copies - the originals stay put)
+  3. Double-click  UPDATE WEBSITE.bat
+
+     Only the photos in cover\ will be used from then on. Delete the
+     folder to go back to using everything.
+
 TO ADD A WHOLE NEW PROJECT
   1. Make the folder:   images\projects\<new name>\4x5\
   2. Copy any existing project-*.html, rename it to
