@@ -85,6 +85,11 @@ TO REMOVE PHOTOS
      It removes the leftover thumbnail and takes the photo off
      every page automatically.
 
+GALLERY PAGE
+  images\gallery\ is hand-picked single frames only - project photos are
+  NOT pulled in automatically any more. It is sorted by filename, so
+  a number prefix (01-, 02-, ...) sets the order on the page.
+
 TO CHOOSE WHICH PHOTOS CAN BE A PROJECT'S COVER
   The tiles on the home page and the projects page show a different
   photo from that project every time someone loads the page. By

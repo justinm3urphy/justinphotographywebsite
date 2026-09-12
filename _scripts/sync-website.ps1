@@ -56,6 +56,14 @@ function Get-DimAttrs($relPath) {
     return ""
 }
 
+# Aspect ratio as a CSS variable. The grid lays photos out in justified rows
+# (styles.css .gallery-masonry) and needs each tile's width/height to do it.
+function Get-RatioStyle($relPath) {
+    $d = Get-ImageDims $relPath
+    if ($d -and $d.h -gt 0) { return (" style=`"--r: " + [math]::Round($d.w / $d.h, 3).ToString([cultureinfo]::InvariantCulture) + "`"") }
+    return ""
+}
+
 # The first grid photo on a page is its Largest Contentful Paint. Marking it
 # lazy tells the browser to fetch it *last*, which is what Core Web Vitals
 # measures. First photo: high priority. Next three: normal. The rest: lazy.
@@ -187,7 +195,7 @@ foreach ($p in $projects) {
                 foreach ($img in $imgs) {
                     $full  = "images/projects/$p/$fmt/" + $img.Name
                     $thumb = if (Test-Path "images\projects\$p\$fmt\thumbs\$($img.Name)") { "images/projects/$p/$fmt/thumbs/" + $img.Name } else { $full }
-                    $htmlStr += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"$p detail`"$(Get-LoadAttrs $n) decoding=`"async`"$(Get-DimAttrs $thumb)></div>`r`n"
+                    $htmlStr += "            <div class=`"gallery-photo reveal`"$(Get-RatioStyle $thumb)><img src=`"$thumb`" data-full=`"$full`" alt=`"$p detail`"$(Get-LoadAttrs $n) decoding=`"async`"$(Get-DimAttrs $thumb)></div>`r`n"
                     $n++
                 }
             }
@@ -343,33 +351,24 @@ $projectsHtmlStr
 Write-Page "projects.html" $projectsContent
 
 # 3. Update Master Gallery Page
+# The gallery is images\gallery only - hand-picked single frames. It used to
+# also pour every project photo in, which made it a 210-photo duplicate of the
+# albums. Formats are merged and sorted by filename, so a numeric prefix
+# (01-, 02-, ...) sets the order.
 $htmlStrGallery = ""
 $n = 0
-foreach ($p in $projects) {
-    $formats = @("4x5", "5x4", "16x9")
-    foreach ($fmt in $formats) {
-        if (Test-Path "images\projects\$p\$fmt") {
-            $imgs = Get-ChildItem -Path "images\projects\$p\$fmt" -File | Where-Object { $_.Extension -match "\.(jpg|jpeg|png|webp)$" }
-            foreach ($img in $imgs) {
-                $full  = "images/projects/$p/$fmt/" + $img.Name
-                $thumb = if (Test-Path "images\projects\$p\$fmt\thumbs\$($img.Name)") { "images/projects/$p/$fmt/thumbs/" + $img.Name } else { $full }
-                $htmlStrGallery += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"$p`"$(Get-LoadAttrs $n) decoding=`"async`"$(Get-DimAttrs $thumb)></div>`r`n"
-                $n++
-            }
-        }
+$galleryFiles = @()
+foreach ($fmt in @("4x5", "5x4", "16x9")) {
+    if (Test-Path "images\gallery\$fmt") {
+        $galleryFiles += Get-ChildItem -Path "images\gallery\$fmt" -File | Where-Object { $_.Extension -match "\.(jpg|jpeg|png|webp)$" }
     }
 }
-$formats = @("4x5", "5x4", "16x9")
-foreach ($fmt in $formats) {
-    if (Test-Path "images\gallery\$fmt") {
-        $imgs = Get-ChildItem -Path "images\gallery\$fmt" -File | Where-Object { $_.Extension -match "\.(jpg|jpeg|png|webp)$" }
-        foreach ($img in $imgs) {
-            $full  = "images/gallery/$fmt/" + $img.Name
-            $thumb = if (Test-Path "images\gallery\$fmt\thumbs\$($img.Name)") { "images/gallery/$fmt/thumbs/" + $img.Name } else { $full }
-            $htmlStrGallery += "            <div class=`"gallery-photo reveal`"><img src=`"$thumb`" data-full=`"$full`" alt=`"gallery`"$(Get-LoadAttrs $n) decoding=`"async`"$(Get-DimAttrs $thumb)></div>`r`n"
-            $n++
-        }
-    }
+foreach ($img in ($galleryFiles | Sort-Object Name)) {
+    $fmt   = $img.Directory.Name
+    $full  = "images/gallery/$fmt/" + $img.Name
+    $thumb = if (Test-Path "images\gallery\$fmt\thumbs\$($img.Name)") { "images/gallery/$fmt/thumbs/" + $img.Name } else { $full }
+    $htmlStrGallery += "            <div class=`"gallery-photo reveal`"$(Get-RatioStyle $thumb)><img src=`"$thumb`" data-full=`"$full`" alt=`"gallery`"$(Get-LoadAttrs $n) decoding=`"async`"$(Get-DimAttrs $thumb)></div>`r`n"
+    $n++
 }
 
 $fileGallery = "gallery.html"
