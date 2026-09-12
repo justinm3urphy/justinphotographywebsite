@@ -512,7 +512,7 @@ body.scrolled .navbar {
    and the order on screen is the order in the HTML (left to right, top to
    bottom). CSS columns used to run the order down each column instead. */
 .gallery-masonry {
-    --row-h: 340px;
+    --row-h: 300px;
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
