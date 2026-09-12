@@ -110,8 +110,23 @@ section {
 }
 
 .page-header {
-    padding-top: 20vh;
-    padding-bottom: 5vh;
+    padding-top: clamp(6rem, 14vh, 9rem);
+    padding-bottom: 2.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem 3rem;
+}
+
+.page-header .huge-text {
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    line-height: 0.95;
+}
+
+.page-header p {
+    max-width: 26rem;
+    margin: 0 0 0.6em;
 }
 
 /* ============================================================
@@ -279,7 +294,7 @@ body.scrolled .navbar {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
-    margin-top: 4rem;
+    margin-top: 1rem;
 }
 
 .work-item {
@@ -347,6 +362,12 @@ body.scrolled .navbar {
         opacity: 1;
         background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
     }
+}
+
+/* The projects index is a list: its labels are always visible, everywhere. */
+.works-grid .work-caption {
+    opacity: 1;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
 }
 
 .work-caption h3 {

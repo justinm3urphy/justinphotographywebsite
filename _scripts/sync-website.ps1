@@ -284,9 +284,9 @@ $projectsContent = @"
     </nav>
 
     <!-- Projects Header -->
-    <section class="container" style="padding-top: 20vh; padding-bottom: 5vh;">
+    <section class="container page-header">
         <h1 class="huge-text reveal">$projectsTitle</h1>
-        <p class="reveal" style="margin-top: 2rem; max-width: 800px;">$projectsIntro</p>
+        <p class="reveal">$projectsIntro</p>
     </section>
 
     <!-- Projects List -->
