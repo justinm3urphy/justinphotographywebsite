@@ -87,7 +87,7 @@
 
     // Builds the cross-section for one item. Returns the group nodes and the
     // distance each one travels at full spread, or null if no formula exists.
-    const buildOptics = (item, groups) => {
+    const buildOptics = (item, groups, container) => {
         const NS = 'http://www.w3.org/2000/svg';
         const W = 1000, H = 420, CY = H / 2, GAP = 12, MARGIN = 20;
         const widths = groups.map(g => g.reduce((s, e) => s + e[2], 0));
@@ -139,9 +139,8 @@
             return node;
         });
 
-        const visual = item.querySelector('.gear-visual');
-        if (!visual) return null;
-        visual.appendChild(svg);
+        if (!container) return null;
+        container.appendChild(svg);
         const spec = item.querySelector('.gear-spec');
         if (spec) {
             const elements = groups.reduce((s, g) => s + g.length, 0);
@@ -150,12 +149,34 @@
         return { nodes, spread };
     };
 
+    // Slides the groups apart: 0 = assembled, 1 = fully spread.
+    const spreadOptics = (o, amount) => {
+        const mid = (o.nodes.length - 1) / 2;
+        o.nodes.forEach((g, k) => { g.style.transform = 'translateX(' + ((k - mid) * amount * o.spread) + 'px)'; });
+    };
+
     run('gear', () => {
         const section = document.querySelector('.gear');
-        if (!section || section.hidden || reduceMotion.matches) return;
+        if (!section || section.hidden) return;
         const items = Array.from(section.querySelectorAll('.gear-item')).filter(el => !el.hidden);
         const track = section.querySelector('.gear-track');
-        if (items.length < 2 || !track) return;
+
+        // Reduced motion (or nothing to cycle): a plain list, but the
+        // cross-section is content, not decoration, so it is still drawn -
+        // fully pulled apart under the photo, with nothing moving.
+        if (reduceMotion.matches || items.length < 2 || !track) {
+            items.forEach(el => {
+                const groups = GEAR_OPTICS[el.dataset.gear];
+                if (!groups) return;
+                const box = document.createElement('div');
+                box.className = 'gear-optics';
+                el.appendChild(box);
+                const o = buildOptics(el, groups, box);
+                if (o) spreadOptics(o, 1);
+            });
+            section.classList.add('is-static');
+            return;
+        }
 
         const rail = section.querySelector('.gear-rail');
         const ticks = items.map(() => {
@@ -166,7 +187,7 @@
 
         // Items with a formula get a full step (photo, then the breakdown);
         // the body gets a shorter one.
-        const optics = items.map(el => GEAR_OPTICS[el.dataset.gear] ? buildOptics(el, GEAR_OPTICS[el.dataset.gear]) : null);
+        const optics = items.map(el => GEAR_OPTICS[el.dataset.gear] ? buildOptics(el, GEAR_OPTICS[el.dataset.gear], el.querySelector('.gear-visual')) : null);
         const weights = optics.map(o => o ? 1 : 0.6);
         const total = weights.reduce((s, w) => s + w, 0);
         const starts = weights.map((w, i) => weights.slice(0, i).reduce((s, x) => s + x, 0) / total);
@@ -182,9 +203,7 @@
             if (!o) return;
             const el = items[i];
             el.classList.toggle('is-exploded', amount > 0);
-            const s = easeOut(amount) * o.spread;
-            const mid = (o.nodes.length - 1) / 2;
-            o.nodes.forEach((g, k) => { g.style.transform = 'translateX(' + ((k - mid) * s) + 'px)'; });
+            spreadOptics(o, easeOut(amount));
         };
 
         let current = -1;

@@ -979,11 +979,30 @@ footer {
     transition: opacity 350ms var(--ease-out);
 }
 
-.gear-item.is-exploded .gear-visual img {
+.gear.is-live .gear-item.is-exploded .gear-visual img {
     opacity: 0;
 }
 
-.gear-item.is-exploded .gear-visual svg {
+.gear.is-live .gear-item.is-exploded .gear-visual svg {
+    opacity: 1;
+}
+
+/* Static list: the diagram sits in its own full-width row under the photo. */
+.gear-optics {
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+}
+
+.gear-optics svg {
+    position: static;
+    display: block;
+    width: 100%;
+    height: auto;
+    opacity: 1;
+    overflow: visible;
+}
+
+.gear.is-static .gear-spec {
     opacity: 1;
 }
 
