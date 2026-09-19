@@ -147,6 +147,15 @@ if ($missing.Count -gt 0) {
     $missing | Select-Object -First 8 | ForEach-Object { $problems += "      $_" }
 }
 
+# mailto links: the address must be a bare address. Markers or markup inside the
+# href used to ship silently because the link check skips mailto:.
+foreach ($f in (Get-ChildItem -Filter "*.html")) {
+    $c = Get-Content $f.Name -Raw -Encoding UTF8
+    foreach ($m in [regex]::Matches($c, 'href="mailto:([^"]*)"')) {
+        if ($m.Groups[1].Value -notmatch '^[^<>\s"]+@[^<>\s"]+$') { $problems += "$($f.Name): bad mailto link: $($m.Groups[1].Value)" }
+    }
+}
+
 # ---- MOBILE CHECKS ----------------------------------------------------------
 $navIcons = @{}
 foreach ($f in (Get-ChildItem -Filter "*.html")) {

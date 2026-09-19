@@ -159,6 +159,9 @@ foreach ($k in $wanted.Keys) {
         $pattern = "(?s)(<!--T:" + [regex]::Escape($k) + "-->).*?(<!--/T-->)"
         if ($c -match $pattern) {
             $c = [regex]::Replace($c, $pattern, { param($m) $m.Groups[1].Value + $new + $m.Groups[2].Value })
+            # The address is also the mailto href, which cannot carry a marker (a
+            # comment inside an attribute is literal text and breaks the link).
+            if ($k -eq 'site.email') { $c = $c -replace 'href="mailto:[^"]*"', ('href="mailto:' + $new + '"') }
             Set-Content $f -Value $c -Encoding UTF8 -NoNewline
             $edited[$f] = $true; $hit = $true
         }
