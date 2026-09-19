@@ -5,19 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Photographer in Singapore. Cars, aircraft, live music and food. Open for commissions.">
     <title>Home — Justin Tang</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+    <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="theme-color" content="#121212">
+    <link rel="canonical" href="https://cogroup.studio/">
+    <noscript><style>.reveal{opacity:1;translate:none}</style></noscript>
     <meta property="og:title" content="Justin Tang — Photography">
     <meta property="og:description" content="Photographer in Singapore. Cars, aircraft, live music and food. Open for commissions.">
     <meta property="og:image" content="https://cogroup.studio/images/main_page/background/MSP08212.jpg">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://cogroup.studio/index.html">
+    <meta property="og:url" content="https://cogroup.studio/">
     <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Person", "name": "Justin Tang", "jobTitle": "Photographer", "url": "https://cogroup.studio/", "email": "mailto:justintangapple@gmail.com", "address": {"@type": "PostalAddress", "addressLocality": "Singapore", "addressCountry": "SG"}, "knowsAbout": ["Automotive photography", "Aviation photography", "Concert photography", "Food photography"], "sameAs": ["https://www.instagram.com/just.in02/", "https://www.instagram.com/airbornearchives/", "https://www.linkedin.com/in/justin-tang-kai-yuan/"]}</script>
 </head>
 <body>
-    <nav class="navbar">
+    <a class="skip-link" href="#contact">Skip to contact</a>
+    <nav class="navbar" aria-label="Primary">
         <div class="logo">
             <a href="index.html">jt.</a>
         </div>
@@ -27,6 +32,7 @@
             <li><a href="meetme.html" class="nav-link">meet me</a></li>
         </ul>
     </nav>
+    <main>
 
     <!-- Hero -->
     <section class="hero container">
@@ -35,7 +41,7 @@
             <p class="hero-subtitle"><!--T:home.subtitle-->I photograph cars, aircraft, live music and food. Based in Singapore, open for commissions.<!--/T--></p>
         </div>
         <div class="hero-image-wrapper">
-            <img src="images/main_page/background/MSP08212.jpg" alt="Justin Tang Photography" class="hero-image" id="hero-img" fetchpriority="high" decoding="async">
+            <img src="images/main_page/background/DSC01365-Edit-Enhanced-SR.jpg" alt="Justin Tang Photography" class="hero-image" id="hero-img" fetchpriority="high" decoding="async">
         </div>
     </section>
 
@@ -64,7 +70,7 @@
     </section>
 
     <!-- Marquee -->
-    <div class="marquee-container reveal">
+    <div class="marquee-container reveal" aria-hidden="true">
         <div class="marquee-content">
             <span>automotive</span>
             <span>aviation</span>
@@ -83,38 +89,38 @@
     <section class="container">
         <h2 class="section-title reveal"><!--T:home.works_heading-->selected works<!--/T--></h2>
         <div class="bento-grid">
-            <a href="project-food.html" class="bento-item reveal">
-                <img src="images/projects/food/cover/thumbs/DSC03369.jpg" data-covers="images/projects/food/cover/thumbs/DSC01244.jpg|images/projects/food/cover/thumbs/DSC03369.jpg|images/projects/food/cover/thumbs/DSC06376.jpg|images/projects/food/cover/thumbs/DSC07548.jpg" alt="Food" loading="lazy">
-                <div class="work-caption">
-                    <h3>Food</h3>
-                    <span>View Project &rarr;</span>
-                </div>
-            </a>
             <a href="project-concerts.html" class="bento-item reveal">
-                <img src="images/projects/concerts/cover/thumbs/DSC05947.jpg" data-covers="images/projects/concerts/cover/thumbs/DSC01805-Enhanced-NR.jpg|images/projects/concerts/cover/thumbs/DSC05947.jpg|images/projects/concerts/cover/thumbs/DSC06487.jpg" alt="Concerts" loading="lazy">
+                <img src="images/projects/concerts/cover/thumbs/DSC01805-Enhanced-NR.jpg" data-covers="images/projects/concerts/cover/thumbs/DSC01805-Enhanced-NR.jpg|images/projects/concerts/cover/thumbs/DSC05947.jpg|images/projects/concerts/cover/thumbs/DSC06487.jpg" alt="Concerts" loading="lazy">
                 <div class="work-caption">
                     <h3>Concerts</h3>
                     <span>View Project &rarr;</span>
                 </div>
             </a>
-            <a href="project-aviation.html" class="bento-item reveal">
-                <img src="images/projects/aviation/cover/thumbs/MSP06061.jpg" data-covers="images/projects/aviation/cover/thumbs/DSC05217.jpg|images/projects/aviation/cover/thumbs/DSC07803.jpg|images/projects/aviation/cover/thumbs/MSP03154.jpg|images/projects/aviation/cover/thumbs/MSP03337.jpg|images/projects/aviation/cover/thumbs/MSP06061.jpg" alt="Aviation" loading="lazy">
+            <a href="project-automotive.html" class="bento-item reveal">
+                <img src="images/projects/automotive/cover/thumbs/MSP04691.jpg" data-covers="images/projects/automotive/cover/thumbs/MSP04550-Edit.jpg|images/projects/automotive/cover/thumbs/MSP04691.jpg|images/projects/automotive/cover/thumbs/MSP07514.jpg|images/projects/automotive/cover/thumbs/MSP09058.jpg|images/projects/automotive/cover/thumbs/MSP09455-Enhanced-NR.jpg" alt="Automotive" loading="lazy">
                 <div class="work-caption">
-                    <h3>Aviation</h3>
+                    <h3>Automotive</h3>
+                    <span>View Project &rarr;</span>
+                </div>
+            </a>
+            <a href="project-food.html" class="bento-item reveal">
+                <img src="images/projects/food/cover/thumbs/DSC07548.jpg" data-covers="images/projects/food/cover/thumbs/DSC01244.jpg|images/projects/food/cover/thumbs/DSC03369.jpg|images/projects/food/cover/thumbs/DSC06376.jpg|images/projects/food/cover/thumbs/DSC07548.jpg" alt="Food" loading="lazy">
+                <div class="work-caption">
+                    <h3>Food</h3>
                     <span>View Project &rarr;</span>
                 </div>
             </a>
             <a href="project-commission.html" class="bento-item reveal">
-                <img src="images/projects/commission/cover/thumbs/DSC00355.jpg" data-covers="images/projects/commission/cover/thumbs/DSC00355.jpg|images/projects/commission/cover/thumbs/DSC00494.jpg" alt="Commission" loading="lazy">
+                <img src="images/projects/commission/cover/thumbs/DSC00494.jpg" data-covers="images/projects/commission/cover/thumbs/DSC00355.jpg|images/projects/commission/cover/thumbs/DSC00494.jpg" alt="Commission" loading="lazy">
                 <div class="work-caption">
                     <h3>Commission</h3>
                     <span>View Project &rarr;</span>
                 </div>
             </a>
-            <a href="project-automotive.html" class="bento-item reveal">
-                <img src="images/projects/automotive/cover/thumbs/MSP09058.jpg" data-covers="images/projects/automotive/cover/thumbs/MSP04550-Edit.jpg|images/projects/automotive/cover/thumbs/MSP04691.jpg|images/projects/automotive/cover/thumbs/MSP07514.jpg|images/projects/automotive/cover/thumbs/MSP09058.jpg|images/projects/automotive/cover/thumbs/MSP09455-Enhanced-NR.jpg" alt="Automotive" loading="lazy">
+            <a href="project-f1.html" class="bento-item reveal">
+                <img src="images/projects/f1/cover/thumbs/DSC02607-Enhanced-NR.jpg" data-covers="images/projects/f1/cover/thumbs/DSC02607-Enhanced-NR.jpg|images/projects/f1/cover/thumbs/DSC02651-Enhanced-NR.jpg|images/projects/f1/cover/thumbs/DSC04222.jpg|images/projects/f1/cover/thumbs/DSC04245.jpg" alt="Formula 1" loading="lazy">
                 <div class="work-caption">
-                    <h3>Automotive</h3>
+                    <h3>Formula 1</h3>
                     <span>View Project &rarr;</span>
                 </div>
             </a>
@@ -133,8 +139,9 @@
             <img src="images/main_page/clients/images.png" alt="Client" class="client-logo" loading="lazy">
         </div>
     </section>
+    </main>
 
-    <footer>
+    <footer id="contact">
         <div class="footer-content">
             <div>
                 <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;"><!--T:site.footer_tagline-->Got something in mind?<!--/T--></p>
@@ -154,7 +161,7 @@
 
     <script src="script.js"></script>
 
-    <nav class="mobile-nav">
+    <nav class="mobile-nav" aria-label="Mobile">
         <a href="index.html">
             <span class="mobile-nav-icon">⌂</span>
             home

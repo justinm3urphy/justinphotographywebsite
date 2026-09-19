@@ -109,7 +109,7 @@ Sony FE 200-600mm f/5.6-6.3 G OSS
 Aircraft. Most of the aviation album is this lens, a lot of heat and a lot of waiting.
 
 [gear.sony-a1.name]
-Sony α1
+Sony Alpha 1
 
 [gear.sony-a1.note]
 The body. Fifty megapixels at thirty frames a second, and it hasn't lost a jet yet.

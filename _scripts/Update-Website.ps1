@@ -178,7 +178,7 @@ foreach ($f in (Get-ChildItem -Filter "*.html")) {
     if ($c -notmatch 'styles\.css')     { $problems += "$($f.Name) does not link styles.css" }
     if ($c -notmatch 'class="mobile-nav"') { $problems += "$($f.Name) has no mobile bottom nav" }
 
-    if ($c -match '(?s)<nav class="mobile-nav">(.*?)</nav>') {
+    if ($c -match '(?s)<nav class="mobile-nav"[^>]*>(.*?)</nav>') {
         $nav = $matches[1]
         $navIcons[$f.Name] = "{0}/{1}" -f ([regex]::Matches($nav,'mobile-nav-icon')).Count, ([regex]::Matches($nav,'<a href')).Count
     }

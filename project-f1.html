@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formula 1 — Justin Tang</title>
     <meta name="description" content="Design work rather than photography: graphic design and creative direction for Formula 1 promotional material.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+    <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="theme-color" content="#121212">
+    <link rel="canonical" href="https://cogroup.studio/project-f1.html">
+    <noscript><style>.reveal{opacity:1;translate:none}</style></noscript>
     <meta property="og:title" content="Formula 1 — Justin Tang">
     <meta property="og:description" content="Design work rather than photography: graphic design and creative direction for Formula 1 promotional material.">
     <meta property="og:image" content="https://cogroup.studio/images/projects/f1/banner/DSC00600.jpg">
@@ -17,7 +20,8 @@
     <meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
-    <nav class="navbar" style="color: white; mix-blend-mode: normal;">
+    <a class="skip-link" href="#contact">Skip to contact</a>
+    <nav class="navbar" aria-label="Primary" style="color: white; mix-blend-mode: normal;">
         <div class="logo">
             <a href="index.html" style="color: white;">jt.</a>
         </div>
@@ -25,22 +29,23 @@
             <li><a href="projects.html" class="nav-link" style="color: white;">back to projects</a></li>
         </ul>
     </nav>
+    <main>
     
 
     <section class="project-hero" style="background-image: url('images/projects/f1/banner/DSC00600.jpg')">
         <h1 class="huge-text reveal"><!--T:project.f1.title-->Formula 1<!--/T--></h1>
     </section>
 
-    <section class="container split-section" style="padding-top: 5vh;">
-        <div class="split-left reveal">
+    <!-- Project Details -->
+    <section class="container" style="padding-top: 5vh; padding-bottom: 0;">
+        <div class="reveal" style="max-width: 800px; margin-bottom: 4rem;">
             <p style="font-size: 1.25rem; font-weight: 600; color: var(--text-primary);"><!--T:project.f1.role-->Role: Designer<!--/T--></p>
             <p style="margin-top: 1rem;"><!--T:project.f1.desc-->Design work rather than photography. Graphic design and creative direction for Formula 1 promotional material.<!--/T--></p>
         </div>
-        <div class="split-right reveal">
-        </div>
     </section>
 
-    <section class="container" style="padding-top: 0; padding-bottom: 10vh;">
+    <!-- Project Gallery -->
+    <section class="container" style="padding-top: 0;">
         <div class="gallery-masonry">
             <div class="gallery-photo reveal" style="--r: 0.8"><img src="images/projects/f1/4x5/thumbs/DSC00901.jpg" data-full="images/projects/f1/4x5/DSC00901.jpg" alt="f1 detail" fetchpriority="high" decoding="async" width="480" height="600"></div>
             <div class="gallery-photo reveal" style="--r: 1"><img src="images/projects/f1/4x5/thumbs/DSC02607-Enhanced-NR.jpg" data-full="images/projects/f1/4x5/DSC02607-Enhanced-NR.jpg" alt="f1 detail" decoding="async" width="600" height="600"></div>
@@ -64,8 +69,9 @@
             <div class="gallery-photo reveal" style="--r: 1.25"><img src="images/projects/f1/5x4/thumbs/DSC04933.jpg" data-full="images/projects/f1/5x4/DSC04933.jpg" alt="f1 detail" loading="lazy" decoding="async" width="600" height="480"></div>
         </div>
     </section>
+    </main>
 
-    <footer>
+    <footer id="contact">
         <div class="footer-content">
             <div>
                 <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;"><!--T:site.footer_tagline-->Got something in mind?<!--/T--></p>
@@ -86,7 +92,7 @@
     <script src="script.js"></script>
 
     <!-- Mobile Navigation -->
-    <nav class="mobile-nav">
+    <nav class="mobile-nav" aria-label="Mobile">
         <a href="index.html">
             <span class="mobile-nav-icon">⌂</span>
             home

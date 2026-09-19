@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gallery — Justin Tang</title>
     <meta name="description" content="Single frames that never belonged to a particular project. Cars, aircraft, concerts and food.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+    <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="theme-color" content="#121212">
+    <link rel="canonical" href="https://cogroup.studio/gallery.html">
+    <noscript><style>.reveal{opacity:1;translate:none}</style></noscript>
     
     <meta property="og:title" content="Gallery — Justin Tang">
     <meta property="og:description" content="Single frames that never belonged to a particular project. Cars, aircraft, concerts and food.">
@@ -18,8 +21,9 @@
     <meta name="twitter:card" content="summary_large_image">
 </head>
 <body style="background-color: var(--accent); color: var(--text-primary);">
+    <a class="skip-link" href="#contact">Skip to contact</a>
     <!-- Navigation (Dark Mode for Gallery) -->
-    <nav class="navbar" style="mix-blend-mode: normal;">
+    <nav class="navbar" aria-label="Primary" style="mix-blend-mode: normal;">
         <div class="logo">
             <a href="index.html" style="color: white;">jt.</a>
         </div>
@@ -29,6 +33,7 @@
             <li><a href="meetme.html" class="nav-link" style="color: white;">meet me</a></li>
         </ul>
     </nav>
+    <main>
 
     <!-- Gallery Header -->
     <section class="container page-header">
@@ -191,12 +196,13 @@
             <div class="gallery-photo reveal" style="--r: 0.8"><img src="images/gallery/4x5/thumbs/153-MSP00845-Enhanced-NR.jpg" data-full="images/gallery/4x5/153-MSP00845-Enhanced-NR.jpg" alt="gallery" loading="lazy" decoding="async" width="480" height="600"></div>
         </div>
     </section>
+    </main>
 
     <!-- Footer -->
-    <footer style="background: var(--bg-primary); color: var(--text-primary);">
+    <footer id="contact" style="background: var(--bg-primary); color: var(--text-primary);">
         <div class="footer-content">
             <div>
-                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Let's work together</p>
+                <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;"><!--T:site.footer_tagline-->Got something in mind?<!--/T--></p>
                 <a href="mailto:justintangapple@gmail.com" class="footer-email"><!--T:site.email-->justintangapple@gmail.com<!--/T--></a>
             </div>
             <div class="footer-socials" style="display: flex; flex-direction: column; gap: 0.5rem; text-align: right;">
@@ -214,7 +220,7 @@
     <script src="script.js"></script>
 
     <!-- Mobile Navigation -->
-    <nav class="mobile-nav">
+    <nav class="mobile-nav" aria-label="Mobile">
         <a href="index.html">
             <span class="mobile-nav-icon">⌂</span>
             home
