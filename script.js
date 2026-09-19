@@ -161,10 +161,10 @@
         const items = Array.from(section.querySelectorAll('.gear-item')).filter(el => !el.hidden);
         const track = section.querySelector('.gear-track');
 
-        // Reduced motion (or nothing to cycle): a plain list, but the
-        // cross-section is content, not decoration, so it is still drawn -
-        // fully pulled apart under the photo, with nothing moving.
-        if (reduceMotion.matches || items.length < 2 || !track) {
+        // Nothing to cycle: a plain list, but the cross-section is content,
+        // not decoration, so it is still drawn - fully pulled apart under the
+        // photo, with nothing moving.
+        if (items.length < 2 || !track) {
             items.forEach(el => {
                 const groups = GEAR_OPTICS[el.dataset.gear];
                 if (!groups) return;
@@ -192,8 +192,12 @@
         const total = weights.reduce((s, w) => s + w, 0);
         const starts = weights.map((w, i) => weights.slice(0, i).reduce((s, x) => s + x, 0) / total);
 
+        // Reduced motion keeps the stage and its crossfades but nothing slides:
+        // styles.css drops the drift, and the diagram appears already spread.
+        const reduced = reduceMotion.matches;
         section.style.setProperty('--gear-steps', total);
         section.classList.add('is-live');
+        section.classList.toggle('is-reduced', reduced);
 
         // 0 = assembled photo, 1 = fully exploded diagram.
         const EXPLODE_FROM = 0.4, EXPLODE_TO = 0.95;
@@ -203,7 +207,7 @@
             if (!o) return;
             const el = items[i];
             el.classList.toggle('is-exploded', amount > 0);
-            spreadOptics(o, easeOut(amount));
+            spreadOptics(o, reduced ? (amount > 0 ? 1 : 0) : easeOut(amount));
         };
 
         let current = -1;

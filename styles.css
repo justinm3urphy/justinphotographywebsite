@@ -1156,6 +1156,16 @@ footer {
     transform: translateY(0);
 }
 
+/* Reduced motion: the stage still cycles, but by crossfade alone. Same
+   specificity as the drift rules above, placed after them. */
+.gear.is-live.is-reduced .gear-item .gear-visual,
+.gear.is-live.is-reduced .gear-item .gear-text,
+.gear.is-live.is-reduced .gear-item.is-past .gear-visual,
+.gear.is-live.is-reduced .gear-item.is-past .gear-text {
+    transform: none;
+    transition: none;
+}
+
 /* Progress rail: one tick per item, filled by script.js. */
 .gear-rail {
     position: absolute;
