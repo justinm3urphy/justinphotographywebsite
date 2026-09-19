@@ -9,6 +9,19 @@
     // Lets iOS Safari apply :active (press feedback) to non-form elements.
     document.addEventListener('touchstart', () => {}, { passive: true });
 
+    // --- Current page in the navs ----------------------------------------------
+    run('nav', () => {
+        const here = location.pathname.split('/').pop() || 'index.html';
+        // Album pages belong to "projects".
+        const section = here.startsWith('project-') ? 'projects.html' : here;
+        document.querySelectorAll('.mobile-nav a, .nav-link').forEach(a => {
+            if (a.getAttribute('href') === section) {
+                a.classList.add('active');
+                a.setAttribute('aria-current', 'page');
+            }
+        });
+    });
+
     // --- Reveal on scroll ----------------------------------------------------
     run('reveal', () => {
         const els = document.querySelectorAll('.reveal');
@@ -23,7 +36,16 @@
                 observer.unobserve(entry.target);
             });
         }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-        els.forEach(el => io.observe(el));
+        // Anything already in view at load appears at once: the page just
+        // navigated (native crossfade); a float-up on top of that is latency.
+        const fold = window.innerHeight;
+        els.forEach(el => {
+            if (el.getBoundingClientRect().top < fold) {
+                el.classList.add('active', 'reveal-instant');
+            } else {
+                io.observe(el);
+            }
+        });
     });
 
     // --- Scroll: navbar state + hero parallax --------------------------------
@@ -35,7 +57,9 @@
         const update = () => {
             ticking = false;
             const y = window.scrollY;
-            document.body.classList.toggle('scrolled', y > 50);
+            // Hysteresis: a jittery trackpad around one threshold flickers the bar.
+            const on = document.body.classList.contains('scrolled');
+            document.body.classList.toggle('scrolled', y > (on ? 30 : 60));
             if (heroWrapper && !reduceMotion.matches) {
                 heroWrapper.style.transform = 'translateY(' + (y * 0.15) + 'px)';
             }
@@ -48,11 +72,6 @@
         update();
     });
 
-    // --- Gear stage (meet me) --------------------------------------------------
-    // The section is a tall track with a sticky stage inside. Scroll progress
-    // through the track picks the active item; CSS does the crossfade. Items
-    // the build hid (no photo yet) are skipped. With fewer than two visible
-    // items, or reduced motion, the section stays a plain list.
     // --- Gear stage (meet me) --------------------------------------------------
     // The section is a tall track with a sticky stage inside. Scroll progress
     // through the track picks the active item; CSS does the crossfade. Items
@@ -109,7 +128,7 @@
 
     // --- Lightbox --------------------------------------------------------------
     run('lightbox', () => {
-        const photos = Array.from(document.querySelectorAll('.gallery-photo img, .slice-details img, .slice-main img'));
+        const photos = Array.from(document.querySelectorAll('.gallery-photo img'));
         if (photos.length === 0) return;
 
         const lightbox = document.createElement('div');
@@ -137,37 +156,35 @@
         document.body.appendChild(lightbox);
 
         const fullSrc = p => p.dataset.full || p.src;
-        let order = [];     // photos in visual order, set when the lightbox opens
+        const order = photos;   // justified rows: DOM order is reading order
         let index = 0;
-        let opener = null;  // the tile that opened the lightbox, for focus return
-
-        // The grid is CSS columns, which lay the DOM out top-to-bottom per
-        // column, so DOM order is not reading order. Sort by position so "next"
-        // means the photo beside this one, not the one underneath it.
-        const visualOrder = () => {
-            const rects = photos.map(p => {
-                const r = p.getBoundingClientRect();
-                return { p, top: r.top, left: r.left, height: r.height };
-            });
-            const tolerance = (Math.min(...rects.map(r => r.height)) / 2) || 40;
-            rects.sort((a, b) => Math.abs(a.top - b.top) < tolerance ? a.left - b.left : a.top - b.top);
-            return rects.map(r => r.p);
-        };
+        let opener = null;      // the tile that opened the lightbox, for focus return
 
         const preload = i => {
             const p = order[(i + order.length) % order.length];
             if (p) new Image().src = fullSrc(p);
         };
 
+        // Thumb first: the tile's image is on screen and cached, so it appears
+        // the instant a photo is chosen, soft (is-loading) until the full-size
+        // file has decoded, then swaps in sharp. Before, the previous photo
+        // sat dimmed until the new ~450 KB file arrived.
+        let pending = null;
         const show = i => {
             index = (i + order.length) % order.length;
+            const p = order[index];
+            if (pending) { pending.onload = pending.onerror = null; }
+            img.src = p.currentSrc || p.src;
+            img.alt = p.alt || '';
             img.classList.add('is-loading');
-            img.src = fullSrc(order[index]);
+            const full = new Image();
+            pending = full;
+            full.onload = () => { if (pending === full) { img.src = full.src; img.classList.remove('is-loading'); } };
+            full.onerror = () => { if (pending === full) img.classList.remove('is-loading'); };
+            full.src = fullSrc(p);
             preload(index + 1);
             preload(index - 1);
         };
-        img.addEventListener('load', () => img.classList.remove('is-loading'));
-        img.addEventListener('error', () => img.classList.remove('is-loading'));
 
         // Everything behind the dialog is inert while it's open.
         const setInert = on => {
@@ -177,7 +194,6 @@
         };
 
         const open = p => {
-            order = visualOrder();
             opener = p;
             show(Math.max(0, order.indexOf(p)));
             lightbox.classList.add('active');
@@ -185,9 +201,12 @@
             document.body.style.overflow = 'hidden';
             setInert(true);
             close.focus({ preventScroll: true });
+            // A history entry, so the phone's Back button closes the viewer
+            // instead of leaving the page.
+            try { history.pushState({ lightbox: true }, ''); } catch (e) { /* file:// origins refuse it */ }
         };
 
-        const shut = () => {
+        const finishShut = () => {
             lightbox.classList.remove('active');
             lightbox.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
@@ -195,6 +214,15 @@
             const target = opener && (opener.closest('.gallery-photo') || opener);
             if (target && typeof target.focus === 'function') target.focus({ preventScroll: true });
         };
+
+        // Close via history so the entry pushed on open is consumed either way.
+        const shut = () => {
+            if (history.state && history.state.lightbox) history.back();
+            else finishShut();
+        };
+        window.addEventListener('popstate', () => {
+            if (lightbox.classList.contains('active')) finishShut();
+        });
 
         // Tiles are keyboard-operable buttons, not just click targets.
         photos.forEach(p => {
