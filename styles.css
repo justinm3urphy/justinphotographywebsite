@@ -924,12 +924,12 @@ footer {
    A stage pinned to the viewport while the page scrolls past it; each
    scroll step brings the next item in. Native scroll drives it (wheel,
    keys, touch all behave normally), so it is not scroll-jacking. With no
-   JS, one item, or reduced motion, script.js never adds .is-live and the
-   items are a plain stacked list.
+   JS or one item, script.js never adds .is-live and the items are a
+   plain stacked list. Reduced motion keeps the stage but crossfades only.
    ============================================================ */
 .gear {
     --gear-steps: 4;
-    --gear-step-h: 120vh; /* per lens: photo, then the cross-section pulls apart */
+    --gear-step-h: 80vh;
     padding: 0;
 }
 
@@ -955,7 +955,6 @@ footer {
 .gear-visual {
     aspect-ratio: 4 / 3;
     min-width: 0;
-    position: relative;
 }
 
 .gear-visual img {
@@ -963,83 +962,6 @@ footer {
     height: 100%;
     object-fit: contain;
     display: block;
-    transition: opacity 350ms var(--ease-out);
-}
-
-/* The cross-section, drawn by script.js on top of the photo. Photo and
-   diagram crossfade as the step passes its midpoint; the groups' positions
-   are set directly from scroll, so scrolling back reassembles the lens. */
-.gear-visual svg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-    opacity: 0;
-    transition: opacity 350ms var(--ease-out);
-}
-
-.gear.is-live .gear-item.is-exploded .gear-visual img {
-    opacity: 0;
-}
-
-.gear.is-live .gear-item.is-exploded .gear-visual svg {
-    opacity: 1;
-}
-
-/* Static list: the diagram sits in its own full-width row under the photo. */
-.gear-optics {
-    grid-column: 1 / -1;
-    margin-top: 1rem;
-}
-
-.gear-optics svg {
-    position: static;
-    display: block;
-    width: 100%;
-    height: auto;
-    opacity: 1;
-    overflow: visible;
-}
-
-.gear.is-static .gear-spec {
-    opacity: 1;
-}
-
-.gear-optic-el {
-    fill: rgba(255, 255, 255, 0.07);
-    stroke: rgba(255, 255, 255, 0.85);
-    stroke-width: 1.5;
-    vector-effect: non-scaling-stroke;
-}
-
-.gear-optic-axis {
-    stroke: rgba(255, 255, 255, 0.2);
-    stroke-width: 1;
-    stroke-dasharray: 3 7;
-    vector-effect: non-scaling-stroke;
-}
-
-.gear-optic-stop {
-    stroke: rgba(255, 255, 255, 0.7);
-    stroke-width: 3;
-    vector-effect: non-scaling-stroke;
-}
-
-.gear-spec {
-    display: block;
-    margin-top: 1.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-    opacity: 0;
-    transition: opacity 350ms var(--ease-out);
-}
-
-.gear-item.is-exploded .gear-spec {
-    opacity: 1;
 }
 
 .gear-index {
@@ -1190,7 +1112,7 @@ footer {
 
 @media (max-width: 768px) {
     .gear {
-        --gear-step-h: 100vh;
+        --gear-step-h: 70vh;
     }
 
     .gear-head {
