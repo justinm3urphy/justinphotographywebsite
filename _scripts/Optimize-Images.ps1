@@ -31,7 +31,7 @@ Add-Type -AssemblyName System.Drawing
 
 $MAX_EDGE   = 2000       # longest side served to a visitor
 $QUALITY    = 85         # JPEG quality for anything re-encoded
-$SOFT_LIMIT = 2MB        # re-encode files fatter than this
+$SOFT_LIMIT = 1MB        # re-encode files fatter than this (was 2 MB: a 1.6 MB 1080 px export slipped through)
 
 $manifestPath = Join-Path $PSScriptRoot ".optimized.json"
 $manifest = @{}
@@ -76,7 +76,7 @@ Write-Host "============================================================"
 Write-Host ""
 
 $files = Get-ChildItem "images" -Recurse -File |
-         Where-Object { $_.Extension -match '\.(jpg|jpeg)$' -and $_.DirectoryName -notmatch '\thumbs$' }
+         Where-Object { $_.Extension -match '\.(jpg|jpeg)$' -and $_.DirectoryName -notmatch '\\thumbs$' }   # '\thumbs' in a .NET regex is TAB + humbs - it never matched
 
 $done = 0; $skipped = 0; $before = 0; $after = 0; $failed = @()
 

@@ -19,7 +19,8 @@ $ErrorActionPreference = "Stop"
 Set-Location (Split-Path $PSScriptRoot -Parent)   # site root is one level up
 Add-Type -AssemblyName System.Drawing
 
-$MAX_EDGE = 600     # longest side of a thumbnail, in pixels
+$MAX_EDGE = 600     # longest side of a grid thumbnail, in pixels
+$COVER_EDGE = 1000  # cover\ and banner\ photos fill tiles up to ~800 CSS px on 2x screens
 $QUALITY  = 82      # JPEG quality (0-100). 82 is visually clean.
 
 # Folders whose images appear in grids. Hero backgrounds, client logos
@@ -39,7 +40,7 @@ function Save-Jpeg($bitmap, $path, $quality) {
 
 Write-Host ""
 Write-Host "============================================================"
-Write-Host "  MAKE THUMBNAILS   (max $MAX_EDGE px, quality $QUALITY)"
+Write-Host "  MAKE THUMBNAILS   (grids $MAX_EDGE px, covers $COVER_EDGE px, quality $QUALITY)"
 Write-Host "============================================================"
 Write-Host ""
 
@@ -58,9 +59,17 @@ foreach ($root in $roots) {
 
         if (-not (Test-Path $thumbDir)) { New-Item -ItemType Directory -Force $thumbDir | Out-Null }
 
-        # up to date already?
+        $edge = if ($file.DirectoryName -match '\\(cover|banner)$') { $COVER_EDGE } else { $MAX_EDGE }
+
+        # up to date already? (newer than the photo, and made at the current size)
         if (Test-Path $thumbPath) {
-            if ((Get-Item $thumbPath).LastWriteTime -ge $file.LastWriteTime) {
+            $fresh = (Get-Item $thumbPath).LastWriteTime -ge $file.LastWriteTime
+            if ($fresh -and $edge -ne $MAX_EDGE) {
+                $t = [System.Drawing.Image]::FromFile($thumbPath); $tl = [Math]::Max($t.Width, $t.Height); $t.Dispose()
+                $o = [System.Drawing.Image]::FromFile($file.FullName); $ol = [Math]::Max($o.Width, $o.Height); $o.Dispose()
+                if ($tl -lt [Math]::Min($edge, $ol)) { $fresh = $false }
+            }
+            if ($fresh) {
                 $skipped++
                 $origBytes  += $file.Length
                 $thumbBytes += (Get-Item $thumbPath).Length
@@ -70,7 +79,7 @@ foreach ($root in $roots) {
 
         try {
             $img = [System.Drawing.Image]::FromFile($file.FullName)
-            $ratio = $MAX_EDGE / [Math]::Max($img.Width, $img.Height)
+            $ratio = $edge / [Math]::Max($img.Width, $img.Height)
             if ($ratio -gt 1) { $ratio = 1 }      # never upscale
             $w = [int]($img.Width * $ratio)
             $h = [int]($img.Height * $ratio)

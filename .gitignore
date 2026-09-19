@@ -3,3 +3,4 @@ node_modules/
 Thumbs.db
 _scripts/.optimized.json
 _archive/
+*.tmp

@@ -50,7 +50,7 @@ Step 1 "Applying your wording from content.txt"
 try {
     if (Test-Path "$PSScriptRoot\Update-Text.ps1") {
         & powershell -NoProfile -ExecutionPolicy Bypass -File "$PSScriptRoot\Update-Text.ps1" -AutoRun
-        if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne $null) { Write-Host "  (finished)" }
+        if ($LASTEXITCODE) { $failed = $true }
     } else {
         Write-Host "  Update-Text.ps1 not found - skipping." -ForegroundColor Yellow
     }
@@ -65,6 +65,7 @@ Step 2 "Shrinking any oversized photos"
 try {
     if (Test-Path "$PSScriptRoot\Optimize-Images.ps1") {
         & powershell -NoProfile -ExecutionPolicy Bypass -File "$PSScriptRoot\Optimize-Images.ps1"
+        if ($LASTEXITCODE) { $failed = $true }
     } else {
         Write-Host "  Optimize-Images.ps1 not found - skipping." -ForegroundColor Yellow
     }
@@ -78,6 +79,7 @@ Step 3 "Making thumbnails for any new photos"
 try {
     if (Test-Path "$PSScriptRoot\Make-Thumbnails.ps1") {
         & powershell -NoProfile -ExecutionPolicy Bypass -File "$PSScriptRoot\Make-Thumbnails.ps1"
+        if ($LASTEXITCODE) { $failed = $true }
     } else {
         Write-Host "  Make-Thumbnails.ps1 not found - skipping." -ForegroundColor Yellow
     }
@@ -90,6 +92,7 @@ try {
 Step 4 "Rebuilding the photo grids and pages"
 try {
     & powershell -NoProfile -ExecutionPolicy Bypass -File "$PSScriptRoot\sync-website.ps1"
+    if ($LASTEXITCODE) { $failed = $true }
 } catch {
     Write-Host "  PROBLEM: $_" -ForegroundColor Red
     $failed = $true
@@ -104,14 +107,24 @@ Get-ChildItem "images" -Recurse -File -ErrorAction SilentlyContinue | ForEach-Ob
     $sizes[$_.FullName.Replace((Get-Location).Path + "\","").Replace("\","/")] = $_.Length
 }
 Write-Host ""
-Write-Host "  Page weight (what a visitor downloads):"
+Write-Host "  Page weight (what a visitor downloads). 'first view' is everything not"
+Write-Host "  marked lazy - it should stay under about 1 MB:"
 foreach ($f in (Get-ChildItem -Filter "*.html" | Sort-Object Name)) {
-    $c = Get-Content $f.Name -Raw
-    $srcs = [regex]::Matches($c, 'src="(images/[^"]+)"') | ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique
-    $tot = 0; foreach ($s in $srcs) { if ($sizes.ContainsKey($s)) { $tot += $sizes[$s] } }
-    $mb = $tot/1MB
-    $flag = if ($mb -gt 25) { "  <-- HEAVY" } else { "" }
-    Write-Host ("    {0,-28} {1,6} photos {2,8:N1} MB{3}" -f $f.Name, $srcs.Count, $mb, $flag)
+    $c = Get-Content $f.Name -Raw -Encoding UTF8
+    $eager = @{}; $lazy = @{}
+    foreach ($m in [regex]::Matches($c, '<img\b[^>]*>')) {
+        $tag = $m.Value
+        if ($tag -match 'src="(images/[^"]+)"') {
+            $src = $matches[1]   # the next -match resets $matches
+            if ($tag -match 'loading="lazy"') { $lazy[$src] = $true } else { $eager[$src] = $true }
+        }
+    }
+    # banners are CSS backgrounds on the hero tag, fetched immediately
+    foreach ($m in [regex]::Matches($c, "url\('(images/[^']+)'\)")) { $eager[$m.Groups[1].Value] = $true }
+    $eKB = 0; foreach ($s in $eager.Keys) { if ($sizes.ContainsKey($s)) { $eKB += $sizes[$s] } }
+    $lKB = 0; foreach ($s in $lazy.Keys)  { if ($sizes.ContainsKey($s)) { $lKB += $sizes[$s] } }
+    $flag = if ($eKB -gt 1MB) { "  <-- HEAVY first view" } else { "" }
+    Write-Host ("    {0,-26} first view {1,3} imgs {2,7:N0} KB   lazy {3,3} imgs {4,7:N0} KB{5}" -f $f.Name, $eager.Count, ($eKB/1KB), $lazy.Count, ($lKB/1KB), $flag)
 }
 
 # ---- sanity checks ----------------------------------------------------------
@@ -179,7 +192,7 @@ if ($shapes.Count -gt 1) {
 $noThumb = 0
 foreach ($f in (Get-ChildItem -Filter "*.html")) {
     $c = Get-Content $f.Name -Raw
-    foreach ($m in [regex]::Matches($c, '<img src="(images/[^"]+)"[^>]*data-full=')) {
+    foreach ($m in [regex]::Matches($c, '<img src="(images/[^"]+)"[^>]*data-(full|covers)=')) {
         if ($m.Groups[1].Value -notmatch '/thumbs/') { $noThumb++ }
     }
 }
@@ -213,3 +226,6 @@ Write-Host ""
 Write-Host "############################################################"
 Write-Host ""
 if (-not $NoPause) { Read-Host "Press Enter to close" }
+# A non-zero exit lets the .bat (and anything automated) see that the build
+# is not fit to publish. Before this the script always exited 0.
+if ($failed -or $problems.Count -gt 0) { exit 1 }

@@ -1,0 +1,12 @@
+# GitHub Pages runs Jekyll. Keep the ops files out of the published site
+# (they are harmless but nobody needs to download the manual). _scripts and
+# _archive are already skipped by the underscore rule; listing them makes it
+# explicit. Never add a .nojekyll file - that would publish everything.
+exclude:
+  - "README - START HERE.txt"
+  - "README.md"
+  - "content.txt"
+  - "UPDATE WEBSITE.bat"
+  - "_scripts"
+  - "_archive"
+  - ".gitattributes"

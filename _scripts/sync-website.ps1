@@ -28,9 +28,6 @@ if ($orphans.Count -gt 0) {
 }
 
 # ---------------------------------------------------------------------------
-# Normalise trailing blank lines: Set-Content used to append a newline on
-# every run, so each build silently grew every page by one blank line.
-
 # Cache of thumbnail dimensions. Emitting width/height on every grid image lets
 # the browser reserve the correct space before the photo loads, which is what
 # stops the masonry grid jumping around as you scroll.
@@ -83,7 +80,10 @@ function Get-CoverPaths($p) {
         if (Test-Path "images\projects\$p\$sub") {
             $files = Get-ChildItem -Path "images\projects\$p\$sub" -File | Where-Object { $_.Extension -match "\.(jpg|jpeg|png|webp)$" }
             if ($files.Count -gt 0) {
-                $paths = @($files | ForEach-Object { "images/projects/$p/$sub/" + $_.Name })
+                # Tiles show the 1000 px thumbnail (Make-Thumbnails), never the 2000 px original.
+                $paths = @($files | ForEach-Object {
+                    if (Test-Path "images\projects\$p\$sub\thumbs\$($_.Name)") { "images/projects/$p/$sub/thumbs/" + $_.Name } else { "images/projects/$p/$sub/" + $_.Name }
+                })
                 break
             }
         }
@@ -147,7 +147,6 @@ Write-Host "Syncing website images..."
 # 1. Update Project Pages (Banners and Gallery Masonry)
 foreach ($p in $projects) {
     $file = "project-${p}.html"
-    if ($p -eq "f1") { $file = "project-f1.html" }
     
     if (Test-Path $file) {
         # --- Banners ---
@@ -161,29 +160,21 @@ foreach ($p in $projects) {
         # DOMContentLoaded. (No project page has a <style> block, so the old
         # "inject CSS" step here never did anything.)
         $heroTag = '<section class="project-hero">'
+        $ogImage = $null
         if ($bannerImgs.Count -gt 0) {
             $chosen = $bannerImgs | Get-Random
             $heroTag = '<section class="project-hero" style="background-image: url(''images/projects/' + $p + '/banner/' + $chosen.Name + ''')">'
+            $ogImage = "https://cogroup.studio/images/projects/$p/banner/" + $chosen.Name
         }
 
-        $content = Get-Content $file -Raw
+        $content = Get-Content $file -Raw -Encoding UTF8
 
-        # Banner: replace the hero tag whatever style it currently carries.
+        # Banner: replace the hero tag whatever style it currently carries, and
+        # make it the album's share image (every page used to share the same one).
         $content = $content -replace '<section class="project-hero"[^>]*>', $heroTag
-
-        # Inject JS
-        # ---------------------------------------------------------------
-        # REWRITTEN. The original tried to match the entire mobile-nav block
-        # as a literal string with unescaped double quotes, which was a
-        # PowerShell parse error - this whole script could never run.
-        # It also hard-coded a mobile-nav layout that no longer matches the
-        # HTML. Anchoring on </body> is simpler and cannot drift.
-        # ---------------------------------------------------------------
-        # The banner used to be set by a script here. It's on the hero tag now;
-        # this strips the old block from pages that still carry it.
-        $content = $content -replace "(?s)\s*<!-- BANNER SCRIPT -->.*?<!-- /BANNER SCRIPT -->", ""
-        # Older pages also carry an unmarked copy of the same script. Strip that too.
-        $content = $content -replace "(?s)\s*<script>\s*document\.addEventListener\('DOMContentLoaded', \(\) => \{\s*const banners = \[.*?</script>", ""
+        if ($ogImage) {
+            $content = $content -replace '<meta property="og:image" content="[^"]*">', ('<meta property="og:image" content="' + $ogImage + '">')
+        }
 
         # --- Masonry Gallery ---
         $htmlStr = ""
@@ -230,7 +221,7 @@ foreach ($p in $projects) {
             <a href="$link" class="work-item medium reveal" id="thumb-$p">
                 $coverImg
                 <div class="work-caption">
-                    <h3>$title</h3>
+                    <h2>$title</h2>
                     <span>view &rarr;</span>
                 </div>
             </a>
@@ -256,33 +247,12 @@ $projectsContent = @"
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cogroup.studio/projects.html">
     <meta name="twitter:card" content="summary_large_image">
-    <style>
-        .works-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-        }
-        @media (max-width: 900px) {
-            .works-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        @media (max-width: 600px) {
-            .works-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        .work-item.medium {
-            grid-column: span 1 !important;
-            aspect-ratio: 4/5 !important;
-        }
-    </style>
 </head>
 <body style="background-color: var(--bg-primary);">
     <!-- Navigation -->
     <nav class="navbar">
         <div class="logo">
-            <a href="index.html">justin tang</a>
+            <a href="index.html">jt.</a>
         </div>
         <ul class="nav-menu">
             <li><a href="projects.html" class="nav-link" style="opacity: 0.6;">projects</a></li>
@@ -373,7 +343,7 @@ foreach ($img in ($galleryFiles | Sort-Object Name)) {
 
 $fileGallery = "gallery.html"
 if (Test-Path $fileGallery) {
-    $content = Get-Content $fileGallery -Raw
+    $content = Get-Content $fileGallery -Raw -Encoding UTF8
     $pattern = "(?s)<div class=`"gallery-masonry`">.*?</div>\s*</section>"
     if ($htmlStrGallery -eq "") {
         $htmlStrGallery = "            <!-- No images uploaded here yet -->`r`n"
@@ -385,7 +355,7 @@ if (Test-Path $fileGallery) {
 
 # 4. UPDATE INDEX.HTML HERO AND SELECTED WORKS
 if (Test-Path "index.html") {
-    $indexContent = Get-Content "index.html" -Raw
+    $indexContent = Get-Content "index.html" -Raw -Encoding UTF8
     
     # Hero image rotation
     $heroImgs = @()
@@ -414,7 +384,6 @@ if (Test-Path "index.html") {
     $slots = [Math]::Min(5, $projects.Count)
     $shuffledProjects = @($projects | Get-Random -Count $slots)
     $worksHtml = ""
-    $delays = @("", " style=`"transition-delay: 0.1s`"", " style=`"transition-delay: 0.2s`"", "", " style=`"transition-delay: 0.1s`"")
     
     for ($i=0; $i -lt $slots; $i++) {
         $p = $shuffledProjects[$i]
@@ -431,10 +400,9 @@ if (Test-Path "index.html") {
         
         $coverImg = Get-CoverImgTag (Get-CoverPaths $p) $title
         $style = "bento-item"
-        $delay = $delays[$i]
 
         $worksHtml += @"
-            <a href="$link" class="$style reveal"$delay>
+            <a href="$link" class="$style reveal">
                 $coverImg
                 <div class="work-caption">
                     <h3>$title</h3>
