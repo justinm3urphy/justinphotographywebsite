@@ -50,7 +50,7 @@ Update-Text.bat / Sync-Website.bat
     steps in the right order.
 
 Optimize-Images.ps1 / .bat
-    DEAD. Only acts on files over 1 MB AND wider than 2000px.
+    runs as step 2 of UPDATE WEBSITE.bat. Only acts on files over 1 MB AND wider than 2000px.
     Every photo is already under 2000px, so it does nothing at
     all while reporting success. Use Make-Thumbnails.ps1.
     Safe to delete.

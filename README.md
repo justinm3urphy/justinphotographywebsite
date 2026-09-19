@@ -29,7 +29,7 @@ To undo a bad publish: `git revert HEAD && git push`.
 | `content.txt` | **All site wording.** Edit this, not the HTML. Never rename a `[heading]`. |
 | `images/` | All photos. `projects/<name>/4x5/`, `gallery/4x5/`, `main_page/background/`. `thumbs/` is auto-generated — don't touch. |
 | `styles.css` | All styling. Global colours are the `:root` variables at the top. |
-| `script.js` | Lightbox and page transitions. |
+| `script.js` | Lightbox and the photo viewer, the reveal-on-scroll and the gear stage on Meet Me. |
 | `index.html`, `gallery.html`, `meetme.html`, `projects.html`, `project-*.html` | Generated pages. Must stay in this top folder or Pages won't find them. |
 | `_scripts/` | The build machinery. `UPDATE WEBSITE.bat` runs it; you don't need to open it. |
 | `CNAME` | The custom domain. Don't delete it — the domain breaks. |

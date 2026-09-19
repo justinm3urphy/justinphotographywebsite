@@ -1,6 +1,6 @@
 ===============================================================
  JUSTIN TANG PHOTOGRAPHY  -  cogroup.studio
- How to run your website. Last updated 10 Aug 2026.
+ How to run your website. Last updated 19 Sep 2026.
 ===============================================================
 
 There are only THREE things you will ever do:
@@ -8,6 +8,11 @@ There are only THREE things you will ever do:
    A. Change some wording        -> edit content.txt
    B. Add or remove photos       -> drag files into images\
    C. Publish it                 -> UPDATE WEBSITE.bat, then push
+
+To look at the site before publishing, double-click PREVIEW.bat and it
+opens in your browser at http://localhost:8080. (Opening index.html
+directly from the folder also works, but the browser then refuses the
+site's font and a couple of small things, so it looks slightly off.)
 
 Everything else is automatic.
 
@@ -19,6 +24,7 @@ Everything else is automatic.
    Website\
    |
    |-- UPDATE WEBSITE.bat     <<< RUN THIS after any change
+   |-- PREVIEW.bat            <<< look at the site locally
    |-- content.txt            <<< EDIT THIS to change wording
    |-- README - START HERE.txt    (this file)
    |
@@ -30,6 +36,9 @@ Everything else is automatic.
    |
    |-- _scripts\              <<< IGNORE THIS FOLDER ENTIRELY
    |                              (the machinery. Don't open it.)
+   |-- fonts\                    the site's typeface (Inter), self-hosted
+   |-- _config.yml               tells GitHub Pages not to publish the
+   |                              READMEs, content.txt and the .bat files
    |
    \-- the .html / .css / .js files
                               <<< DON'T EDIT THESE BY HAND
@@ -139,9 +148,9 @@ STEP 1 - Run the updater
      Wait for "DONE." and check nothing is listed as a PROBLEM.
 
 STEP 2 - Look at it yourself
-     Double-click index.html and gallery.html to open them in
-     your browser. Click a photo to check the lightbox works.
-     ALWAYS do this. The site is live - mistakes go public.
+     Double-click PREVIEW.bat. Check the home page and the gallery,
+     click a photo to check the viewer works, swipe on your phone if
+     you can. ALWAYS do this. The site is live - mistakes go public.
 
 STEP 3 - Push it
 
@@ -204,9 +213,10 @@ UPDATE WEBSITE.bat now shrinks photos for you, in this order:
 
   1. Any photo over 2000px on the long edge is resized down to
      2000px and saved at quality 85.
-  2. Anything still over 2MB is re-encoded.
+  2. Anything still over 1MB is re-encoded.
   3. Everything else is left completely alone.
-  4. Then thumbnails (600px) are made from the result.
+  4. Then thumbnails are made from the result: 600px for the grids,
+     1000px for the cover\ and banner\ photos that fill the big tiles.
 
 So a 6000px, 3MB Lightroom export becomes about 400KB before it
 ever reaches the site. Tested: 3,248 KB -> 387 KB.
@@ -250,10 +260,6 @@ UPDATE WEBSITE.bat checks the mobile essentials every run:
 Still open it on your actual phone before pushing. A script can
 check structure; it can't tell you if something looks wrong.
 
-Possible tweak: the gallery shows 3 columns on a phone, which
-makes the photos quite small. 2 columns would give them more
-room. One line of CSS if you want it.
-
 
 ===============================================================
  WHAT WAS WRONG BEFORE (all fixed)
@@ -269,8 +275,7 @@ room. One line of CSS if you want it.
 
 3. DEAD HERO CODE.
    The sync script looked for an image path that doesn't exist,
-   so it did nothing. (Your hero still rotated - script.js does
-   that in the browser. This was dead code, not a broken feature.)
+   so it did nothing. It now picks a hero photo at build time.
 
 4. FOOTER INCONSISTENCIES.
    projects.html had lowercase "built with google antigravity"
@@ -296,12 +301,8 @@ room. One line of CSS if you want it.
  IF SOMETHING GOES WRONG
 ===============================================================
 
-There is a backup of every code file (not the photos) at:
-
-    Website_BACKUP_2026-08-10
-
-That is the site exactly as it was before any of these changes.
-Copy those files back over the top and you're where you started.
+Every version of every file is in git, so nothing is ever lost:
+GitHub Desktop's History tab shows each change and can restore it.
 
 If you already pushed something bad, you can undo the last
 commit with:
