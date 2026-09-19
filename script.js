@@ -239,9 +239,103 @@
             });
         });
 
-        prev.addEventListener('click', () => show(index - 1));
-        next.addEventListener('click', () => show(index + 1));
+        // Directional change for the buttons and swipes: the photo leaves the
+        // way it is going and the next one comes in from the other side.
+        // Keyboard arrows keep the instant swap (frequent, no animation).
+        let stepping = false;
+        const stepTo = (delta, dir) => {
+            if (stepping) return;
+            stepping = true;
+            const move = !reduceMotion.matches;
+            lightbox.classList.remove('is-dragging');
+            img.style.transition = 'transform 200ms var(--ease-out), opacity 200ms ease';
+            img.style.transform = move ? 'translateX(' + (dir * window.innerWidth * 0.3) + 'px)' : '';
+            img.style.opacity = '0';
+            setTimeout(() => {
+                show(index + delta);
+                img.style.transition = 'none';
+                img.style.transform = move ? 'translateX(' + (-dir * 32) + 'px)' : '';
+                void img.offsetWidth; // flush, so the next change animates
+                img.style.transition = 'transform 250ms var(--ease-out), opacity 250ms ease';
+                img.style.transform = '';
+                img.style.opacity = '';
+                setTimeout(() => { img.style.transition = ''; lightbox.style.backgroundColor = ''; stepping = false; }, 260);
+            }, 200);
+        };
+
+        prev.addEventListener('click', () => stepTo(-1, 1));
+        next.addEventListener('click', () => stepTo(1, -1));
         close.addEventListener('click', shut);
+
+        // --- Touch: swipe sideways for prev/next, pull down to close --------------
+        // Pointer Events with capture. Nothing happens until the finger has
+        // moved 10 px; then the axis locks. Horizontal tracks 1:1; vertical
+        // shrinks the photo and thins the scrim so the page shows through, with
+        // a rubber band past 300 px. Release commits on distance or on velocity
+        // in the same direction as the drag; otherwise it settles back.
+        const swipe = { id: null, x0: 0, y0: 0, axis: null, samples: [] };
+        const settle = () => {
+            swipe.id = null;
+            lightbox.classList.remove('is-dragging');
+            img.style.transform = '';
+            lightbox.style.backgroundColor = '';
+        };
+        const velocity = () => {
+            const s = swipe.samples;
+            if (s.length < 2) return { vx: 0, vy: 0 };
+            const a = s[0], b = s[s.length - 1];
+            const dt = Math.max(1, b.t - a.t);
+            return { vx: (b.x - a.x) / dt, vy: (b.y - a.y) / dt };
+        };
+        lightbox.addEventListener('pointerdown', e => {
+            if (!lightbox.classList.contains('active') || e.pointerType === 'mouse') return;
+            if (swipe.id !== null || stepping) return;          // one finger at a time
+            if (e.target === prev || e.target === next || e.target === close) return;
+            swipe.id = e.pointerId; swipe.x0 = e.clientX; swipe.y0 = e.clientY; swipe.axis = null;
+            swipe.samples = [{ x: e.clientX, y: e.clientY, t: e.timeStamp }];
+            try { lightbox.setPointerCapture(e.pointerId); } catch (err) { /* synthetic events */ }
+        });
+        lightbox.addEventListener('pointermove', e => {
+            if (e.pointerId !== swipe.id) return;
+            const dx = e.clientX - swipe.x0, dy = e.clientY - swipe.y0;
+            swipe.samples.push({ x: e.clientX, y: e.clientY, t: e.timeStamp });
+            if (swipe.samples.length > 5) swipe.samples.shift();
+            if (!swipe.axis) {
+                if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+                swipe.axis = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
+                lightbox.classList.add('is-dragging');
+            }
+            if (swipe.axis === 'x') {
+                img.style.transform = 'translateX(' + dx + 'px)';
+            } else {
+                let d = dy;
+                if (Math.abs(d) > 300) d = Math.sign(d) * (300 + (Math.abs(d) - 300) * 0.3);
+                const k = Math.min(Math.abs(d), 300) / 300;
+                img.style.transform = 'translateY(' + d + 'px) scale(' + (1 - k * 0.15) + ')';
+                lightbox.style.backgroundColor = 'rgba(0,0,0,' + (0.95 - k * 0.6) + ')';
+            }
+        });
+        const release = e => {
+            if (e.pointerId !== swipe.id) return;
+            const dx = e.clientX - swipe.x0, dy = e.clientY - swipe.y0;
+            const axis = swipe.axis, v = velocity();
+            if (e.type === 'pointercancel' || !axis) { settle(); return; }
+            if (axis === 'x') {
+                const far = Math.abs(dx) > window.innerWidth * 0.25;
+                const fast = Math.abs(v.vx) > 0.11 && Math.sign(v.vx) === Math.sign(dx);
+                swipe.id = null;
+                if (far || fast) stepTo(dx < 0 ? 1 : -1, dx < 0 ? -1 : 1);
+                else settle(); // .active's 300 ms transform transition carries it back
+            } else {
+                const far = Math.abs(dy) > 120;
+                const fast = Math.abs(v.vy) > 0.11 && Math.sign(v.vy) === Math.sign(dy);
+                if (far || fast) { shut(); setTimeout(settle, 200); }
+                else settle();
+            }
+        };
+        lightbox.addEventListener('pointerup', release);
+        lightbox.addEventListener('pointercancel', release);
+        lightbox.addEventListener('lostpointercapture', e => { if (e.pointerId === swipe.id) settle(); });
         lightbox.addEventListener('click', e => { if (e.target === lightbox) shut(); });
 
         document.addEventListener('keydown', e => {

@@ -620,6 +620,11 @@ body.scrolled .navbar {
     transition: transform 300ms var(--ease-out), opacity 200ms ease, filter 200ms ease;
 }
 
+/* While a finger is down the photo follows it 1:1 - never animate under a drag. */
+.lightbox.is-dragging img {
+    transition: none;
+}
+
 /* Immediate response to prev/next while the full-size photo is still loading. */
 .lightbox img.is-loading {
     opacity: 0.5;
