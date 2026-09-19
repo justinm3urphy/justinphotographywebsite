@@ -920,6 +920,299 @@ footer {
 }
 
 /* ============================================================
+   GEAR (meet me)
+   A stage pinned to the viewport while the page scrolls past it; each
+   scroll step brings the next item in. Native scroll drives it (wheel,
+   keys, touch all behave normally), so it is not scroll-jacking. With no
+   JS, one item, or reduced motion, script.js never adds .is-live and the
+   items are a plain stacked list.
+   ============================================================ */
+.gear {
+    --gear-steps: 4;
+    --gear-step-h: 120vh; /* per lens: photo, then the cross-section pulls apart */
+    padding: 0;
+}
+
+.gear-head {
+    padding-top: 10vw;
+}
+
+.gear-head p {
+    margin-top: -1rem;
+}
+
+.gear-items {
+    list-style: none;
+}
+
+.gear-item {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    align-items: center;
+    gap: clamp(2rem, 5vw, 5rem);
+}
+
+.gear-visual {
+    aspect-ratio: 4 / 3;
+    min-width: 0;
+    position: relative;
+}
+
+.gear-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    transition: opacity 350ms var(--ease-out);
+}
+
+/* The cross-section, drawn by script.js on top of the photo. Photo and
+   diagram crossfade as the step passes its midpoint; the groups' positions
+   are set directly from scroll, so scrolling back reassembles the lens. */
+.gear-visual svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    opacity: 0;
+    transition: opacity 350ms var(--ease-out);
+}
+
+.gear-item.is-exploded .gear-visual img {
+    opacity: 0;
+}
+
+.gear-item.is-exploded .gear-visual svg {
+    opacity: 1;
+}
+
+.gear-optic-el {
+    fill: rgba(255, 255, 255, 0.07);
+    stroke: rgba(255, 255, 255, 0.85);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+}
+
+.gear-optic-axis {
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 1;
+    stroke-dasharray: 3 7;
+    vector-effect: non-scaling-stroke;
+}
+
+.gear-optic-stop {
+    stroke: rgba(255, 255, 255, 0.7);
+    stroke-width: 3;
+    vector-effect: non-scaling-stroke;
+}
+
+.gear-spec {
+    display: block;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    opacity: 0;
+    transition: opacity 350ms var(--ease-out);
+}
+
+.gear-item.is-exploded .gear-spec {
+    opacity: 1;
+}
+
+.gear-index {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.gear-name {
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
+
+.gear-note {
+    margin-top: 1rem;
+    font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+    line-height: 1.4;
+    color: var(--text-secondary);
+    max-width: 24em;
+}
+
+/* Static list (the default until script.js opts in). */
+.gear:not(.is-live) .gear-item {
+    padding: 4rem 0;
+    border-top: 1px solid var(--border-light);
+}
+
+.gear:not(.is-live) .gear-item:first-child {
+    border-top: 0;
+}
+
+.gear:not(.is-live) .gear-rail {
+    display: none;
+}
+
+/* Live: a tall track gives each item its share of scroll; the stage sticks
+   inside it and every item shares one grid cell, so the stack is as tall as
+   its tallest item. The heading pins to the top of the stage and stays
+   through every step. */
+.gear.is-live .gear-head {
+    position: absolute;
+    top: clamp(5rem, 12vh, 8rem);
+    left: 8vw;
+    right: 8vw;
+    padding-top: 0;
+}
+
+.gear.is-live .gear-head .section-title {
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    margin-bottom: 0.25rem;
+}
+
+.gear.is-live .gear-head p {
+    margin-top: 0;
+    font-size: 1rem;
+}
+
+.gear.is-live .gear-track {
+    height: calc(var(--gear-steps) * var(--gear-step-h) + 100vh);
+}
+
+.gear.is-live .gear-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.gear.is-live .gear-items {
+    display: grid;
+    width: 100%;
+}
+
+.gear.is-live .gear-item {
+    grid-area: 1 / 1;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 450ms var(--ease-out);
+}
+
+.gear.is-live .gear-item.is-active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Direction: items arrive from below and leave upwards, so scrolling back
+   brings the previous one down from where it went. The text trails the
+   photo by one beat. */
+.gear.is-live .gear-visual,
+.gear.is-live .gear-text {
+    transform: translateY(24px);
+    transition: transform 450ms var(--ease-out);
+}
+
+.gear.is-live .gear-text {
+    transition-duration: 350ms;
+    transition-delay: 60ms;
+}
+
+.gear.is-live .gear-item.is-past .gear-visual,
+.gear.is-live .gear-item.is-past .gear-text {
+    transform: translateY(-16px);
+}
+
+.gear.is-live .gear-item.is-active .gear-visual,
+.gear.is-live .gear-item.is-active .gear-text {
+    transform: translateY(0);
+}
+
+/* Progress rail: one tick per item, filled by script.js. */
+.gear-rail {
+    position: absolute;
+    right: 8vw;
+    bottom: 3rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.gear-rail span {
+    display: block;
+    width: 1.5rem;
+    height: 2px;
+    background: var(--text-primary);
+    opacity: 0.25;
+    transition: opacity 250ms ease;
+}
+
+.gear-rail span.is-active {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .gear {
+        --gear-step-h: 100vh;
+    }
+
+    .gear-head {
+        padding-top: 8vw;
+    }
+
+    .gear.is-live .gear-head {
+        top: 2rem;
+    }
+
+    .gear.is-live .gear-head .section-title {
+        font-size: 1.5rem !important;
+        margin-bottom: 0.5rem;
+    }
+
+    .gear.is-live .gear-head p {
+        margin-top: 0;
+        font-size: 0.9rem !important;
+    }
+
+    .gear-item {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        align-content: center;
+    }
+
+    .gear-visual {
+        max-height: 40svh;
+        width: 100%;
+    }
+
+    .gear-name {
+        font-size: 1.5rem;
+    }
+
+    /* Keep the stage's content clear of the fixed bottom nav. */
+    .gear.is-live .gear-stage {
+        padding-bottom: calc(90px + env(safe-area-inset-bottom));
+    }
+
+    .gear-rail {
+        right: 6vw;
+        bottom: calc(110px + env(safe-area-inset-bottom));
+    }
+
+    .gear:not(.is-live) .gear-item {
+        padding: 2.5rem 0;
+    }
+}
+
+/* ============================================================
    CUSTOM SCROLLBAR
    ============================================================ */
 ::-webkit-scrollbar {

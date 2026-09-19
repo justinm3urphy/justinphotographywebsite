@@ -80,6 +80,42 @@ Singapore
 
 
 # ------------------------------------------------------------
+#  GEAR  (the "what i shoot with" section on meetme.html)
+#  Photos go in images\gear\ - see README - START HERE.txt
+# ------------------------------------------------------------
+
+[gear.heading]
+what i shoot with
+
+[gear.intro]
+Not much of it, and none of it is why a photo works. But people ask.
+
+[gear.sigma-24-70.name]
+Sigma 24-70mm f/2.8 DG DN Art
+
+[gear.sigma-24-70.note]
+The walk-around lens. Food, cars up close, anything that happens within arm's reach.
+
+[gear.sony-70-200.name]
+Sony FE 70-200mm f/2.8 GM OSS
+
+[gear.sony-70-200.note]
+Concerts and pit lanes. Light for what it is, and on the camera more than anything else.
+
+[gear.sony-200-600.name]
+Sony FE 200-600mm f/5.6-6.3 G OSS
+
+[gear.sony-200-600.note]
+Aircraft. Most of the aviation album is this lens, a lot of heat and a lot of waiting.
+
+[gear.sony-a1.name]
+Sony α1
+
+[gear.sony-a1.note]
+The body. Fifty megapixels at thirty frames a second, and it hasn't lost a jet yet.
+
+
+# ------------------------------------------------------------
 #  GALLERY PAGE  (gallery.html)
 # ------------------------------------------------------------
 

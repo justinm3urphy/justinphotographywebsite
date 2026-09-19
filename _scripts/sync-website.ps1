@@ -455,6 +455,58 @@ if (Test-Path "index.html") {
     Write-Page "index.html" $indexContent
 }
 
+# 5. GEAR SECTION ON MEETME.HTML
+# Each <li class="gear-item" data-gear="<slug>"> shows images\gear\<slug>.jpg
+# (or .png / .webp). An item with no photo is hidden; with no photos at all the
+# whole section is hidden. So the page can be published before the gear has
+# been photographed, and the section appears by itself when the files arrive.
+$fileMeet = "meetme.html"
+if (Test-Path $fileMeet) {
+    $meet = Get-Content $fileMeet -Raw -Encoding UTF8
+    $meetOrig = $meet
+
+    # slug -> display name, for the alt text
+    $gearNames = @{}
+    foreach ($m in [regex]::Matches($meet, '<!--T:gear\.([^.]+)\.name-->(.*?)<!--/T-->')) {
+        $gearNames[$m.Groups[1].Value] = ($m.Groups[2].Value -replace '<[^>]+>', '')
+    }
+
+    $script:gearShown = 0
+    $script:gearTotal = 0
+    $itemPattern = '(?s)<li class="gear-item" data-gear="([^"]+)"( hidden)?>(\s*)<div class="gear-visual">.*?</div>'
+    $meet = [regex]::Replace($meet, $itemPattern, {
+        param($m)
+        $slug = $m.Groups[1].Value
+        $ws   = $m.Groups[3].Value
+        $script:gearTotal++
+        $photo = $null
+        foreach ($ext in @("jpg", "jpeg", "png", "webp")) {
+            if (Test-Path "images\gear\$slug.$ext") { $photo = "images/gear/$slug.$ext"; break }
+        }
+        if ($photo) {
+            $script:gearShown++
+            $alt = if ($gearNames.ContainsKey($slug)) { $gearNames[$slug] } else { $slug }
+            return "<li class=`"gear-item`" data-gear=`"$slug`">$ws<div class=`"gear-visual`"><img src=`"$photo`" alt=`"$alt`" loading=`"lazy`" decoding=`"async`"$(Get-DimAttrs $photo)></div>"
+        }
+        return "<li class=`"gear-item`" data-gear=`"$slug`" hidden>$ws<div class=`"gear-visual`"><!-- no photo yet: add images\gear\$slug.jpg --></div>"
+    })
+
+    if ($script:gearShown -gt 0) {
+        $meet = $meet -replace '<section class="gear" id="gear" hidden>', '<section class="gear" id="gear">'
+    } else {
+        $meet = $meet -replace '<section class="gear" id="gear">', '<section class="gear" id="gear" hidden>'
+    }
+
+    if ($meet -ne $meetOrig) { Write-Page $fileMeet $meet }
+    if ($script:gearTotal -gt 0) {
+        if ($script:gearShown -eq 0) {
+            Write-Host "Gear section: hidden - no photos in images\gear yet (see README, 'TO ADD YOUR GEAR PHOTOS')"
+        } else {
+            Write-Host "Gear section: $($script:gearShown) of $($script:gearTotal) items have a photo in images\gear"
+        }
+    }
+}
+
 Write-Host "Sync Complete! All HTML files updated."
 
 

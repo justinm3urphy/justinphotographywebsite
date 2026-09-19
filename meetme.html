@@ -61,6 +61,59 @@
         </div>
     </section>
 
+    <!-- Gear. The build (sync-website.ps1, step 5) wires images/gear/<slug>.jpg
+         into each item and hides items - or the whole section - until the
+         photos exist. Wording lives in content.txt under [gear.*]. -->
+    <section class="gear" id="gear" hidden>
+        <div class="gear-track">
+            <div class="gear-stage container">
+                <div class="gear-head">
+                    <h2 class="section-title reveal"><!--T:gear.heading-->what i shoot with<!--/T--></h2>
+                    <p class="reveal"><!--T:gear.intro-->Not much of it, and none of it is why a photo works. But people ask.<!--/T--></p>
+                </div>
+                <ol class="gear-items">
+                    <li class="gear-item" data-gear="sigma-24-70" hidden>
+                        <div class="gear-visual"><!-- no photo yet: add images\gear\sigma-24-70.jpg --></div>
+                        <div class="gear-text">
+                            <span class="gear-index">01</span>
+                            <h3 class="gear-name"><!--T:gear.sigma-24-70.name-->Sigma 24-70mm f/2.8 DG DN Art<!--/T--></h3>
+                            <p class="gear-note"><!--T:gear.sigma-24-70.note-->The walk-around lens. Food, cars up close, anything that happens within arm's reach.<!--/T--></p>
+                            <span class="gear-spec"></span>
+                        </div>
+                    </li>
+                    <li class="gear-item" data-gear="sony-70-200" hidden>
+                        <div class="gear-visual"><!-- no photo yet: add images\gear\sony-70-200.jpg --></div>
+                        <div class="gear-text">
+                            <span class="gear-index">02</span>
+                            <h3 class="gear-name"><!--T:gear.sony-70-200.name-->Sony FE 70-200mm f/2.8 GM OSS<!--/T--></h3>
+                            <p class="gear-note"><!--T:gear.sony-70-200.note-->Concerts and pit lanes. Light for what it is, and on the camera more than anything else.<!--/T--></p>
+                            <span class="gear-spec"></span>
+                        </div>
+                    </li>
+                    <li class="gear-item" data-gear="sony-200-600" hidden>
+                        <div class="gear-visual"><!-- no photo yet: add images\gear\sony-200-600.jpg --></div>
+                        <div class="gear-text">
+                            <span class="gear-index">03</span>
+                            <h3 class="gear-name"><!--T:gear.sony-200-600.name-->Sony FE 200-600mm f/5.6-6.3 G OSS<!--/T--></h3>
+                            <p class="gear-note"><!--T:gear.sony-200-600.note-->Aircraft. Most of the aviation album is this lens, a lot of heat and a lot of waiting.<!--/T--></p>
+                            <span class="gear-spec"></span>
+                        </div>
+                    </li>
+                    <li class="gear-item" data-gear="sony-a1" hidden>
+                        <div class="gear-visual"><!-- no photo yet: add images\gear\sony-a1.jpg --></div>
+                        <div class="gear-text">
+                            <span class="gear-index">04</span>
+                            <h3 class="gear-name"><!--T:gear.sony-a1.name-->Sony α1<!--/T--></h3>
+                            <p class="gear-note"><!--T:gear.sony-a1.note-->The body. Fifty megapixels at thirty frames a second, and it hasn't lost a jet yet.<!--/T--></p>
+                            <span class="gear-spec"></span>
+                        </div>
+                    </li>
+                </ol>
+                <div class="gear-rail" aria-hidden="true"></div>
+            </div>
+        </div>
+    </section>
+
     <section class="container" style="padding-top: 5vh; padding-bottom: 10vh;">
         <h2 class="section-title reveal" style="text-align: center; font-size: 2rem; color: var(--text-secondary);">trusted by</h2>
         <div class="clients-grid reveal">

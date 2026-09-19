@@ -26,6 +26,7 @@ $groups = [ordered]@{
     "SITE-WIDE  (appears in the footer of every page)" = @("site.footer_tagline","site.email","site.copyright","site.built_with")
     "HOME PAGE  (index.html)"                          = @("home.title","home.subtitle","home.about_heading","home.about_body","home.based_in","home.specialties","home.available","home.works_heading")
     "MEET ME PAGE  (meetme.html)"                      = @("meetme.title","meetme.tagline","meetme.body","meetme.location")
+    "GEAR  (the what-i-shoot-with section on meetme.html)" = @("gear.heading","gear.intro","gear.sigma-24-70.name","gear.sigma-24-70.note","gear.sony-70-200.name","gear.sony-70-200.note","gear.sony-200-600.name","gear.sony-200-600.note","gear.sony-a1.name","gear.sony-a1.note")
     "GALLERY PAGE  (gallery.html)"                     = @("gallery.title","gallery.intro")
     "PROJECT: AUTOMOTIVE"                              = @("project.automotive.title","project.automotive.role","project.automotive.desc")
     "PROJECT: AVIATION"                                = @("project.aviation.title","project.aviation.role","project.aviation.desc")

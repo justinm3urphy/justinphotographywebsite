@@ -102,6 +102,21 @@ TO CHOOSE WHICH PHOTOS CAN BE A PROJECT'S COVER
      Only the photos in cover\ will be used from then on. Delete the
      folder to go back to using everything.
 
+TO ADD YOUR GEAR PHOTOS  (the "what i shoot with" section on meet me)
+  Photograph each item on black, then save the files with these
+  exact names:
+
+       images\gear\sigma-24-70.jpg
+       images\gear\sony-70-200.jpg
+       images\gear\sony-200-600.jpg
+       images\gear\sony-a1.jpg
+
+  Double-click UPDATE WEBSITE.bat. Items with a photo appear; items
+  without one stay hidden. With no photos at all the whole section
+  is hidden, so nothing is broken in the meantime. Export size does
+  not matter - the updater shrinks them. The wording is in
+  content.txt under [gear.*].
+
 TO ADD A WHOLE NEW PROJECT
   1. Make the folder:   images\projects\<new name>\4x5\
   2. Copy any existing project-*.html, rename it to
